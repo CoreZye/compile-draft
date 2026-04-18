@@ -1,0 +1,203 @@
+.status-pick {
+  cursor: not-allowed;
+  /*transform: scaleY(-1);*/
+}
+.status-ban {
+  cursor: not-allowed;
+  /*transform: scaleY(-1);*/
+}
+.status-available {
+  cursor: pointer;
+}
+.status-unavailable {
+  cursor: not-allowed;
+  filter: grayscale(80%);
+  /*transform: scaleY(-1);*/
+}
+
+.striped-overlay {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--stripe-color, rgba(10, 10, 10, 0.5)),
+    var(--stripe-color, rgba(10, 10, 10, 0.5)) 7px,
+    transparent 5px,
+    transparent 12px
+  );
+}
+
+button {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.player-0 .picked-protocol {
+  border-color: var(--player-1-color);
+}
+.player-0 .player-name {
+  color: var(--player-1-color);
+}
+.player-1 .picked-protocol {
+  border-color: var(--player-2-color);
+}
+.player-1 .player-name {
+  color: var(--player-2-color);
+}
+
+.picked-protocols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 10px;
+}
+.picked-protocol {
+  height: 40px;
+  border: 1px dashed;
+  transform: skewX(20deg);
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  justify-content: center;
+}
+.picked-protocol.status-picked {
+  border-style: double;
+}
+.picked-protocol span {
+  transform: skewX(-20deg);
+}
+
+.protocol {
+  position: relative;
+  transition: transform 0.4s ease;
+}
+.protocol.active {
+  outline: 2px solid var(--accent) ;
+  outline-offset: -2px;
+}
+.protocol-sprite {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 430 / 308;
+  background-repeat: no-repeat;
+  background-size: 513% 445%;
+  background-position: 5% 11.4%;
+}
+.protocol-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
+.draft-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  z-index: 999;
+  background: var(--bg);
+  padding-bottom: 10px;
+}
+
+.draft-pool {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  overflow: auto;
+  gap: 8px;
+
+  @media (max-width: 1200px ) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (max-width: 800px ) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 599px ) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.protocol-draft {
+  display: flex;
+  flex-direction: column;
+}
+.protocol-draft h3 {
+  text-align: center;
+}
+.protocol-draft.player-1 {
+  flex-direction: column-reverse;
+}
+
+span {
+  text-align: center;
+  color: var(--text)
+}
+
+.draft-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 5px;
+}
+.selected-protocol {
+  width: 70%;
+}
+h4 {
+  font-size: 18px;
+  text-align: center;
+  color: var(--accent);
+}
+.protocol-info {
+  display: flex;
+  flex-direction: column;
+}
+.flavor-text,
+.info-text {
+}
+.draft-select button {
+  width: 30%;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+}
+
+.draft-steps {
+  margin: 5px 0 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.draft-steps .step.player-0 {
+  color: var(--player-1-color);
+}
+
+.draft-steps .step.player-1 {
+  color: var(--player-2-color);
+}
+
+.step {
+  position: relative;
+  margin-left: 8px;
+  font-size: 12px;
+}
+.step:after {
+  transform: skewX(20deg);
+  border: 1px solid var(--accent);
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  text-align: center;
+  justify-content: center;
+  content: "";
+}
+.step.active:after {
+  border-color: white;
+}
