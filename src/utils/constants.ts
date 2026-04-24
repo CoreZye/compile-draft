@@ -1,4 +1,5 @@
 import compileOneBackground from '../assets/compile-1.png';
+import { faHome, faUser, faLineChart, faCrosshairs, faBook } from '@fortawesome/free-solid-svg-icons';
 
 export type DraftAction = 'PICK' | 'BAN';
 export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE'
@@ -18,6 +19,15 @@ export interface DraftItem {
     info: string;
 }
 export const SNAKE_SEQUENCE: DraftStep[] = [
+    { player: 0, action: 'PICK' },
+    { player: 1, action: 'PICK' },
+    { player: 1, action: 'PICK' },
+    { player: 0, action: 'PICK' },
+    { player: 0, action: 'PICK' },
+    { player: 1, action: 'PICK' },
+];
+
+export const COMPETITIVE_SNAKE_SEQUENCE: DraftStep[] = [
     { player: 0, action: 'BAN' },
     { player: 1, action: 'BAN' },
     { player: 1, action: 'BAN' },
@@ -74,11 +84,6 @@ export const COLORS = [
     '#eb8ce2',
     '#e9a91e'
 ]
-export const ACTION_COLORS = {
-    'BAN': '#ff000099',
-    'PICK': '#81FF0099',
-    'GIVE': '#ffd90099'
-}
 
 export const MAX_DRAFT = 3;
 
@@ -86,6 +91,14 @@ export const VIEWS = {
     HOME: 'home',
     STATS: 'stats',
     DRAFT: 'draft',
-    SETTINGS: 'setup',
+    CODEX: 'codex',
     PROFILE: 'profile'
 };
+
+export const MENU = [
+    { id: VIEWS.HOME, title: 'Home', icon: faHome },
+    { id: VIEWS.STATS, title: 'Stats', icon: faLineChart },
+    { id: VIEWS.DRAFT, title: 'Draft', icon: faCrosshairs },
+    { id: VIEWS.CODEX, title: 'Codex', icon: faBook },
+    { id: VIEWS.PROFILE, title: 'Profile', icon: faUser },
+]

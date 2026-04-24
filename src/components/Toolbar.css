@@ -1,6 +1,5 @@
 .toolbar {
     width: 100%;
-    border-top: 2px solid #304e6c;
     height: 70px;
     margin-top: 10px;
     flex-shrink: 0;
@@ -13,6 +12,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border-top: 2px solid var(--border-light);
     transition: background-color 0.2s;
 }
 .nav-item  {
@@ -28,6 +28,7 @@
 
 .toolbar-item:hover,
 .toolbar-item.active {
+    border-top: 2px solid var(--accent);
     background-color: var(--code-bg);
 }
 .toolbar-item.active .nav-item{
