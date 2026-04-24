@@ -44,6 +44,10 @@ button {
   color: var(--player-2-color);
 }
 
+.player-0 .picked-protocols {
+  direction: rtl;
+}
+
 .picked-protocols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
