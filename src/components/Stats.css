@@ -1,0 +1,4 @@
+.my-content-area {
+    height: calc(100% - 20px);
+    overflow: scroll
+}

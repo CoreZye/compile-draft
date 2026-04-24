@@ -1,4 +1,4 @@
-//import './Stats.css';
+import './Stats.css';
 import React from 'react';
 import {Table, type SortType, Nav, Panel} from 'rsuite';
 import {INITIAL_POOL} from '@/utils/constants'
