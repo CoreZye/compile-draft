@@ -23,3 +23,20 @@
     align-items: center;
     height: 100%;
 }
+
+.rs-divider {
+    border-color: var(--border-light);
+}
+
+.collapsible {
+  transition: transform 1.5s ease, opacity 1.5s ease;
+  transform-origin: center;
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.collapsible.closed {
+  transform: scaleY(0);
+  opacity: 0;
+  /* Optional: point-events: none; to prevent clicking the 'invisible' div */
+}

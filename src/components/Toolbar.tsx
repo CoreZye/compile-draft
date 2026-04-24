@@ -13,7 +13,7 @@ function Toolbar({ activeView, onViewChange }: ToolbarProps) {
         { id: VIEWS.HOME, title: 'Home', icon: faHome },
         { id: VIEWS.STATS, title: 'Stats', icon: faLineChart },
         { id: VIEWS.DRAFT, title: 'Draft', icon: faCrosshairs },
-        { id: VIEWS.SETTINGS, title: 'Codex', icon: faBook },
+        { id: VIEWS.CODEX, title: 'Codex', icon: faBook },
         { id: VIEWS.PROFILE, title: 'Profile', icon: faUser },
     ]
     const loggedIn = true;
@@ -38,8 +38,8 @@ function Toolbar({ activeView, onViewChange }: ToolbarProps) {
 
                         </div>
                     </div>
-                )
-            })}
+                )})
+            }
         </nav>
     );
 }

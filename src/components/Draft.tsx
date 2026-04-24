@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Button, Divider} from 'rsuite';
-import { type DraftItem, SNAKE_SEQUENCE, INITIAL_POOL, PACKS, ACTION_COLORS, MAX_DRAFT} from '../utils/constants.ts'
+import { type DraftItem, SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '../utils/constants.ts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faMapMarker, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import './Draft.css'
@@ -95,9 +95,9 @@ function Draft() {
                             );
                         })}
                         <div className={'draft-steps'}>
-                            {currentDraft.map((step) => {
+                            {currentDraft.map((step, idx) => {
                                 return (
-                                    <span className={'step ' + ('player-' + step.player) + (step === currentStep ? ' active' : '')}>
+                                    <span key={idx} className={'step ' + ('player-' + step.player) + (step === currentStep ? ' active' : '')}>
                                         {step.action === 'BAN' && <FontAwesomeIcon icon={faBan} size={'lg'} />}
                                         {step.action === 'PICK' && <FontAwesomeIcon icon={faMapMarker} size={'lg'} />}
                                     </span>
@@ -107,7 +107,7 @@ function Draft() {
                         <Divider style={{margin: 0}}/>
                     </div>
 
-                    <div className={'draft-pool'}>
+                    <div className={'draft-pool collapsible' + (isDraftOver ? ' closed' : '')}>
                         {pool.map((item) => (
                             <button
                                 key={item.id}
@@ -125,16 +125,7 @@ function Draft() {
                                 }}>
                                     {item.name}
                                 </div>
-                                <div
-                                    className={'protocol-overlay ' + (item.status !== 'AVAILABLE' ? 'striped-overlay' : '')}
-                                    style={
-                                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                        // @ts-expect-error
-                                        {['--stripe-color' as string]: item.status ? ACTION_COLORS[item.status] : 'transparent'}
-                                    }
-                                >
-
-                                </div>
+                                <div className={'protocol-overlay ' + (item.status !== 'AVAILABLE' ? 'striped-overlay' : '')}></div>
                             </button>
                         ))}
                     </div>

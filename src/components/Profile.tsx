@@ -1,4 +1,4 @@
-import './Profile.css';
+//import './Profile.css';
 import { GoogleLogin } from '@react-oauth/google';
 
 function Profile () {
