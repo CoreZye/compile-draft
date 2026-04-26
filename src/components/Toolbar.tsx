@@ -1,22 +1,17 @@
 import './Toolbar.css';
 import {Badge, Avatar} from 'rsuite';
+import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUser, faBook, faLineChart, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import  {VIEWS} from "@/utils/constants.ts";
+import { VIEWS } from "@/utils/constants.ts";
+import { type MenuItem } from '@/App';
 
 interface ToolbarProps {
     activeView: string;
     onViewChange: (view: string) => void;
+    menu: MenuItem[];
 }
-function Toolbar({ activeView, onViewChange }: ToolbarProps) {
-    const menu = [
-        { id: VIEWS.HOME, title: 'Home', icon: faHome },
-        { id: VIEWS.STATS, title: 'Stats', icon: faLineChart },
-        { id: VIEWS.DRAFT, title: 'Draft', icon: faCrosshairs },
-        { id: VIEWS.CODEX, title: 'Codex', icon: faBook },
-        { id: VIEWS.PROFILE, title: 'Profile', icon: faUser },
-    ]
-    const loggedIn = true;
+function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
+    const [loggedIn, _setLoggedIn] = useState(true);
     return (
         <nav className="toolbar">
             {menu.map((item, idx) => {
@@ -27,7 +22,11 @@ function Toolbar({ activeView, onViewChange }: ToolbarProps) {
                         <div className="nav-item">
                             {item.id === VIEWS.PROFILE && loggedIn?
                                 <Badge content={2} shape="circle" invisible>
-                                    <Avatar src="https://i.pravatar.cc/150?u=2" circle size={'md'} style={{marginBottom: '2.5px'}} />
+                                    <Avatar 
+                                        src="https://lh3.googleusercontent.com/a/ACg8ocJk8u6dy43ensnKJXUBqKJG-OjRYFH3wO7aGsN4QCSf4dS_v8J2=s96-c" 
+                                        circle size={'md'} 
+                                        style={{marginBottom: '2.5px'}} 
+                                    />
                                 </Badge>
                                 :
                                 <>

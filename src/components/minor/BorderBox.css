@@ -1,0 +1,44 @@
+.dash-container {
+  position: relative;
+  display: inline-block;
+  padding: 1px; /* Minimal padding so border doesn't touch content */
+  border-radius: 4px;
+}
+
+.dash-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.dash-rect {
+  fill: none;
+  stroke-width: 2;
+  rx: 4;
+}
+.dash-rect.active {
+    animation: dash-march 0.8s linear infinite;
+}
+
+@keyframes dash-march {
+  from {
+    stroke-dashoffset: var(--dash-offset-sum, 12);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.dash-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

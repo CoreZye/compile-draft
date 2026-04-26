@@ -31,15 +31,17 @@ button {
   padding: 0;
 }
 
-.player-0 .picked-protocol {
-  border-color: var(--player-1-color);
+.player-0 .picked-protocol .dash-svg .dash-rect {
+  stroke: var(--player-1-color) !important;
 }
+.player-0 .picked-protocol span,
 .player-0 .player-name {
   color: var(--player-1-color);
 }
-.player-1 .picked-protocol {
-  border-color: var(--player-2-color);
+.player-1 .picked-protocol .dash-svg .dash-rect {
+  stroke: var(--player-2-color) !important;
 }
+.player-1 .picked-protocol span,
 .player-1 .player-name {
   color: var(--player-2-color);
 }
@@ -56,7 +58,7 @@ button {
 }
 .picked-protocol {
   height: 40px;
-  border: 1px dashed;
+  /*border: 1px dashed;*/
   transform: skewX(20deg);
   margin: 5px 0;
   display: flex;
@@ -64,9 +66,7 @@ button {
   padding: 0 10px;
   justify-content: center;
 }
-.picked-protocol.status-picked {
-  border-style: double;
-}
+
 .picked-protocol span {
   transform: skewX(-20deg);
 }
@@ -163,6 +163,7 @@ h4 {
 }
 .flavor-text,
 .info-text {
+  text-align: center;
 }
 .draft-select button {
   width: 30%;
@@ -190,6 +191,13 @@ h4 {
   margin-left: 8px;
   font-size: 12px;
 }
+.step.active {
+  transform: translate(-2px, -2px)
+}
+.step svg {
+  position: relative;
+  z-index: 9;
+}
 .step:after {
   transform: skewX(20deg);
   border: 1px solid var(--accent);
@@ -201,6 +209,29 @@ h4 {
   text-align: center;
   justify-content: center;
   content: "";
+}
+.step.done::before {
+  content: '';
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 10;
+  background: linear-gradient(
+    to top left,
+    transparent calc(50% - 1px),
+    red calc(50% - 1px),
+    red calc(50% + 1px),
+    transparent calc(50% + 1px)
+  );
+}
+.step.done svg {
+  opacity: 0.5;
+}
+.step.done:after {
+  
+  border-color: gray;
 }
 .step.active:after {
   border-color: white;

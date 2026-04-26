@@ -1,9 +1,10 @@
 import {useState} from 'react';
 import {Button, Divider} from 'rsuite';
-import { type DraftItem, SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '../utils/constants.ts'
+import { type DraftItem, COMPETITIVE_SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '../utils/constants.ts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faMapMarker, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faMapMarker, faHandHolding, faOtter } from '@fortawesome/free-solid-svg-icons';
 import './Draft.css'
+import BorderBox from './minor/borderBox.tsx';
 
 function Draft() {
     const [pool, setPool] = useState<DraftItem[]>(INITIAL_POOL);
@@ -12,16 +13,18 @@ function Draft() {
     const [ownedBoxes] = useState<number[]>([1,3]);
     const [draftActive, setDraftActive] = useState<boolean>(false);
     const [selectedProtocol, setSelectedProtocol] = useState<DraftItem|null>(null);
-    const isDraftOver = turnIndex >= SNAKE_SEQUENCE.length;
-    const currentDraft = SNAKE_SEQUENCE;
+    const currentDraft = COMPETITIVE_SNAKE_SEQUENCE;
+    const isDraftOver = turnIndex >= currentDraft.length;
     const currentStep = currentDraft[turnIndex];
+    const hideUnavailable = true;
     const initializePool = (masterItems: DraftItem[], ownedBoxIds: number[]): DraftItem[] => {
         const ownedItemIds = new Set(
             PACKS.filter(box => ownedBoxIds.includes(box.id))
                 .flatMap(box => box.contains)
         );
-
-        return masterItems.map(item => ({
+        return masterItems.filter(item => {
+            return !hideUnavailable || ownedItemIds.has(item.id);
+        }).map(item => ({
             ...item,
             status: ownedItemIds.has(item.id) ? 'AVAILABLE' : 'UNAVAILABLE'
         }));
@@ -46,10 +49,11 @@ function Draft() {
             )
         );
 
-        if (action === 'PICK') {
+        if (action === 'PICK' || action === 'GIVE') {
+            const recivePlayer = action === 'GIVE' ? player === 0 ? 1 : 0 : player;
             setParties((prevParties) => {
                 const newParties = [...prevParties];
-                newParties[player] = [...newParties[player], { ...selectedItem, status: action }];
+                newParties[recivePlayer] = [...newParties[recivePlayer], { ...selectedItem, status: action }];
                 return newParties;
             });
         }
@@ -63,31 +67,30 @@ function Draft() {
                 <>
                     <div className={'draft-header'}>
                         {parties.map((playerItems, playerIdx) => {
+                            const playerName = 'Player ' + (playerIdx + 1);
                             return (
                                 <section key={playerIdx} className={"protocol-draft" + (' player-'+playerIdx)}>
-                                    <h4 className={'player-name'}>Player {playerIdx + 1}</h4>
+                                    <h4 className={'player-name'}>{playerName}</h4>
                                     <div className={'picked-protocols'}>
                                         {Array.from({ length: MAX_DRAFT }).map((_, slotIdx) => {
+                                            const item = playerItems[slotIdx];
                                             const isCurrent =
                                                 slotIdx === playerItems.length &&
-                                                currentStep.action === 'PICK' &&
-                                                playerIdx === currentStep.player;
-                                            const item = playerItems[slotIdx];
+                                                playerIdx === currentStep.player &&
+                                                currentStep.action === 'PICK';
 
                                             return (
-                                                <div className={'picked-protocol ' + (item ? 'status-picked' : '')} key={slotIdx} >
+                                                <BorderBox 
+                                                    key={slotIdx} 
+                                                    active={isCurrent} 
+                                                    className={'picked-protocol'} 
+                                                >
                                                     {item ? (
                                                         <span>{item.name}</span>
                                                     ) : (
-                                                        <span>
-                                                            {isCurrent ?
-                                                                <FontAwesomeIcon icon={faSpinner} size={'lg'} spinPulse/>
-                                                            :
-                                                                <>...</>
-                                                            }
-                                                        </span>
+                                                        <span></span>
                                                     )}
-                                                </div>
+                                                </BorderBox>
                                             );
                                         })}
                                     </div>
@@ -97,9 +100,18 @@ function Draft() {
                         <div className={'draft-steps'}>
                             {currentDraft.map((step, idx) => {
                                 return (
-                                    <span key={idx} className={'step ' + ('player-' + step.player) + (step === currentStep ? ' active' : '')}>
+                                    <span key={idx} 
+                                        className={
+                                            'step' + 
+                                            (' player-' + step.player) + 
+                                            (idx < turnIndex ? ' done' : '') +
+                                            (step === currentStep ? ' active' : '')
+                                        }
+                                    >
                                         {step.action === 'BAN' && <FontAwesomeIcon icon={faBan} size={'lg'} />}
                                         {step.action === 'PICK' && <FontAwesomeIcon icon={faMapMarker} size={'lg'} />}
+                                        {step.action === 'GIVE' && <FontAwesomeIcon icon={faHandHolding} size={'lg'} />}
+                                        {step.action === 'OTHER' && <FontAwesomeIcon icon={faOtter} size={'lg'} />}
                                     </span>
                                 )
                             })}
@@ -123,7 +135,7 @@ function Draft() {
                                     backgroundImage: `url(${item.image})`,
                                     backgroundPosition: `${item.x}% ${item.y}%`
                                 }}>
-                                    {item.name}
+                                    {/*item.name*/}
                                 </div>
                                 <div className={'protocol-overlay ' + (item.status !== 'AVAILABLE' ? 'striped-overlay' : '')}></div>
                             </button>
@@ -140,16 +152,55 @@ function Draft() {
                             </div>
                             <Button onClick={() => {
                                 handleAction(selectedProtocol);
-                            }}>Confirm {currentStep.action.toLowerCase()}</Button>
+                            }}>
+                                Confirm {currentStep.action.toLowerCase()}
+                            </Button>
                         </div>
                     }
 
                 </>
                 :
-                <Button onClick={startDraft}>Start Draft</Button>
+                <>
+                    <div style={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
+                        {`
+                            Pick Start player vs Random
+                            Pick Draft type
+                            Use Names or not?
+                            Share screen or join by Code
+
+                        `.trim().replace(/^\s+/gm, '')}
+                    </div>
+                    <div style={{display: 'flex', flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        
+                        <Button onClick={startDraft}>Start Draft</Button>
+                    </div>
+                </>
             }
         </>
     );
 }
 
 export default Draft;
+
+/*
+Avoid "Look-alike" Characters
+To make it user-friendly (so people don't ask "Is that an 'O' or a '0'?"), 
+use a reduced alphabet. Remove 0, O, 1, I, L, and S/5.If you use a 30-character set ($A-Z$ minus confusing 
+ones + some numbers):5 characters still gives you $30^5 = \mathbf{24.3\ million}$ combinations. This is the 
+"sweet spot" for mobile games (like Jackbox or Among Us).
+
+Implementation LogicTo 
+ensure the code is "unusable" 
+after, your Firebase/Database logic should look like this:Generation: Generate a random 5-char string.Validation: 
+Check if that document ID already exists in an active_drafts collection. If yes, generate a new one.Active State:
+ Keep a field status: "waiting" | "active".Cleanup: When the draft is submitted, move the data to a completed_drafts 
+ collection (or change status to archived) and delete the record from the active_drafts lookup table.
+ 
+ Preventing Brute Force
+ If you are worried about people guessing codes, implement a rate limit:If a device tries 5 incorrect codes in a 
+ row, block their ability to "Join" for 10 minutes. This makes the $0.06\%$ chance effectively impossible to exploit.
+ 
+ Final Recommendation: 
+ Go with 5 characters. It's easy for a human to type on a phone, feels "pro," and provides over 
+ 60 million combinations—far more than you'll likely ever have concurrent users for.
+*/

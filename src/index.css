@@ -60,4 +60,12 @@
   overflow: hidden;
   background: var(--bg);
   border-inline: 1px solid var(--border);
+
+  /*
+  transform: rotate(90deg) translate(24%, 46%);
+  height: 100dvw !important;
+  width: 100dvh !important;
+  min-height: 100svw;
+  max-width: 100vh;
+  */
 }

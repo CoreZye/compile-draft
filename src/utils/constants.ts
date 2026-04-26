@@ -1,8 +1,7 @@
 import compileOneBackground from '../assets/compile-1.png';
-import { faHome, faUser, faLineChart, faCrosshairs, faBook } from '@fortawesome/free-solid-svg-icons';
 
-export type DraftAction = 'PICK' | 'BAN';
-export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE'
+export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'OTHER';
+export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'OTHER'
 
 export interface DraftStep {
     player: number;
@@ -94,11 +93,3 @@ export const VIEWS = {
     CODEX: 'codex',
     PROFILE: 'profile'
 };
-
-export const MENU = [
-    { id: VIEWS.HOME, title: 'Home', icon: faHome },
-    { id: VIEWS.STATS, title: 'Stats', icon: faLineChart },
-    { id: VIEWS.DRAFT, title: 'Draft', icon: faCrosshairs },
-    { id: VIEWS.CODEX, title: 'Codex', icon: faBook },
-    { id: VIEWS.PROFILE, title: 'Profile', icon: faUser },
-]

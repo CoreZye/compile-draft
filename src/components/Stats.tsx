@@ -1,5 +1,5 @@
 import './Stats.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Table, type SortType, Nav, Panel} from 'rsuite';
 import {INITIAL_POOL} from '@/utils/constants'
 const { Column, HeaderCell, Cell } = Table;
@@ -66,6 +66,10 @@ function Stats () {
         }, 500);
     };
 
+    useEffect(() =>{
+        handleSortColumn('games', 'desc');
+    },[])
+
 
     return (
         <>
@@ -83,31 +87,31 @@ function Stats () {
                             affixHeader
                             affixHorizontalScrollbar
                         >
-                            <Column width={100} flexGrow={1} align="center" fixed resizable>
+                            <Column width={100} flexGrow={3} fixed resizable>
                                 <HeaderCell> </HeaderCell>
                                 <Cell dataKey="protocol" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={2} sortable>
                                 <HeaderCell>Games</HeaderCell>
                                 <Cell dataKey="games" />
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={2} sortable>
                                 <HeaderCell>Pick %</HeaderCell>
                                 <Cell dataKey="pick" >
                                     {rowData =><>{rowData.pick.toFixed(2)}%</>}
                                 </Cell>
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={2} sortable>
                                 <HeaderCell>Win %</HeaderCell>
                                 <Cell dataKey="win" >
                                     {rowData =><>{rowData.win.toFixed(2)}%</>}
                                 </Cell>
                             </Column>
 
-                            <Column flexGrow={1} sortable>
+                            <Column flexGrow={2} sortable>
                                 <HeaderCell>Loss %</HeaderCell>
                                 <Cell dataKey="loss" >
                                     {rowData =><>{rowData.loss.toFixed(2)}%</>}
@@ -125,7 +129,16 @@ function Stats () {
 
                 {activeKey === 'other' && (
                     <Panel header="Other Statistics">
-                        {/* Your GDPR Privacy Policy */}
+                        <div style={{height: '70vh', whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
+                            {`
+                                Personal vs Global Stats
+                                - Basic: Games, Ban, Pick, Win, Loss ratios
+                                - Combos: What protocols are often togather and their win ratios (best and worst?)
+                                - First/Second/Third pick?
+                                - ?? what more ??
+                                `.trim().replace(/^\s+/gm, '')
+                            }
+                        </div>
                     </Panel>
                 )}
             </main>
