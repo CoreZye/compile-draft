@@ -10,11 +10,10 @@ import BorderBox from '@/components//minor/BorderBox.tsx';
 import { useSettings } from "@/context/SettingContext.ts";
 
 function Draft() {
-    const { setBeSure } = useSettings();
+    const { setBeSure, ownedBoxIds } = useSettings();
     const [pool, setPool] = useState<DraftItem[]>(INITIAL_POOL);
     const [parties, setParties] = useState<DraftItem[][]>([[], []]);
     const [turnIndex, setTurnIndex] = useState<number>(0);
-    const [ownedBoxes] = useState<number[]>([1,3]);
     const [draftActive, setDraftActive] = useState<boolean>(false);
     const [selectedProtocol, setSelectedProtocol] = useState<DraftItem|null>(null);
     const currentDraft = COMPETITIVE_SNAKE_SEQUENCE;
@@ -40,7 +39,8 @@ function Draft() {
     };
 
     const startDraft = () => {
-        const initialPool = initializePool(INITIAL_POOL, ownedBoxes);
+        const initialPool = initializePool(INITIAL_POOL, ownedBoxIds);
+        console.log(initialPool, ownedBoxIds);
         setPool(initialPool);
         setTurnIndex(0);
         setDraftActive(true);

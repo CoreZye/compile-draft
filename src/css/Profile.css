@@ -8,3 +8,23 @@
     background-color: transparent !important;
     display: inline-block;
 }
+.rs-radio-tile:not(.rs-radio-tile-checked) {
+    border-color: var(--rs-border-primary) !important;
+    background: var(--rs-bg-card) !important;
+}
+.rs-radio-tile-group {
+    padding: 5px;
+}
+
+.rs-radio-tile-mark {
+    background: var(--accent)
+}
+.cycle-1 .rs-radio-tile-icon svg {
+    color: var(--cycle-1-color)
+}
+.cycle-2 .rs-radio-tile-icon svg {
+    color: var(--cycle-2-color)
+}
+.cycle-3 .rs-radio-tile-icon svg {
+    color: var(--cycle-3-color)
+}

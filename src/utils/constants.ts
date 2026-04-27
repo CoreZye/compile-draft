@@ -75,10 +75,10 @@ export const INITIAL_POOL: DraftItem[] = [
 ];
 
 export const PACKS= [
-    { id: 1, name: 'Main 1', contains: [1,2,3,4,5,6,7,8,9,10,11,12]},
-    { id: 2, name: 'Aux 1', contains: [13,14,15]},
-    { id: 3, name: 'Main 2', contains: [16,17,18,19,20,21,22,23,24,25,26,27]},
-    { id: 4, name: 'Aux 2', contains: [28,29,30]}
+    { id: 1, cycle: 1, codename: 'main-1', name: 'Main 1', contains: [1,2,3,4,5,6,7,8,9,10,11,12]},
+    { id: 2, cycle: 1, codename: 'aux-1', name: 'Aux 1', contains: [13,14,15]},
+    { id: 3, cycle: 2, codename: 'main-2', name: 'Main 2', contains: [16,17,18,19,20,21,22,23,24,25,26,27]},
+    { id: 4, cycle: 2, codename: 'aux-2', name: 'Aux 2', contains: [28,29,30]}
 ]
 
 export const COLORS = [
@@ -119,3 +119,29 @@ export const iconMap: Record<number, IconType> = {
     5: PiNumberFiveFill,
     6: PiNumberSixFill,
 }
+
+export const getTreeData = () => {
+    const packNodes = PACKS.map(pack => {
+        const children = INITIAL_POOL
+            .filter(item => pack.contains.includes(item.id))
+            .map(item => ({
+                label: item.name,
+                value: `item-${item.id}`,
+            }));
+
+        return {
+            label: pack.name,
+            value: `pack-${pack.id}`,
+            children: children
+        };
+    });
+    return packNodes;
+    // 3. Wrap everything in the "All" node
+    return [
+        {
+            label: 'All',
+            value: 'all',
+            children: packNodes
+        }
+    ];
+};

@@ -13,8 +13,7 @@ interface ToolbarProps {
     beSure?: boolean
 }
 function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
-    const {beSure, setBeSure } = useSettings();
-    const [loggedIn] = useState(false);
+    const {beSure, setBeSure, isLoggedIn, image } = useSettings();
     const [chosen, setChosen] = useState<string|null>(null);
     const [openModal, setOpenModal] = useState(false);
 
@@ -42,10 +41,10 @@ function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
                         }}
                     >
                         <div className="nav-item">
-                            {item.id === VIEWS.PROFILE && loggedIn?
+                            {item.id === VIEWS.PROFILE && isLoggedIn?
                                 <Badge content={2} shape="circle" invisible>
                                     <Avatar 
-                                        src="https://lh3.googleusercontent.com/a/ACg8ocJk8u6dy43ensnKJXUBqKJG-OjRYFH3wO7aGsN4QCSf4dS_v8J2=s96-c" 
+                                        src={image}
                                         circle size={'md'} 
                                         style={{marginBottom: '2.5px'}} 
                                     />

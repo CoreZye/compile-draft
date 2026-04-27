@@ -4,6 +4,13 @@ import { createContext, useContext } from 'react';
 export interface AppSettings {
     ownedBoxIds: number[];
     beSure: boolean;
+    isLoggedIn: boolean;
+    token: string | null;
+    name: string | undefined;
+    family: string | undefined;
+    email: string | undefined;
+    subject: string  | undefined;
+    image: string | undefined;
     theme: 'dark' | 'light';
     draftLocked: boolean;
 }
@@ -12,6 +19,8 @@ export interface AppSettings {
 export interface SettingsContextType extends AppSettings {
     setOwnedBoxIds: (ids: number[]) => void;
     setBeSure: (sure: boolean) => void;
+    login: (token: string) => void;
+    logout: () => void;
     setTheme: (t: 'dark' | 'light') => void;
     toggleLock: () => void;
 }

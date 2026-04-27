@@ -166,6 +166,7 @@ h4 {
 }
 .flavor-text,
 .info-text {
+  font-size: 13px;
   text-align: center;
 }
 .draft-select button {
