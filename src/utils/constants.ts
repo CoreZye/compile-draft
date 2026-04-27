@@ -1,7 +1,10 @@
 import compileOneBackground from '../assets/compile-1.png';
 
 export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'OTHER';
-export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'OTHER'
+export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'OTHER';
+import { PiNumberZeroFill, PiNumberOneFill, PiNumberTwoFill, PiNumberThreeFill, PiNumberFourFill, PiNumberFiveFill, PiNumberSixFill } from "react-icons/pi";
+import { TbPlayCardQFilled, TbPlayCard1Filled, TbPlayCard2Filled, TbPlayCard3Filled, TbPlayCard4Filled, TbPlayCard5Filled, TbPlayCard6Filled } from "react-icons/tb";
+import { type IconType} from 'react-icons';
 
 export interface DraftStep {
     player: number;
@@ -93,3 +96,37 @@ export const VIEWS = {
     CODEX: 'codex',
     PROFILE: 'profile'
 };
+
+export interface Card {
+    value: number;
+    top: string;
+    middle: string;
+    bottom: string
+}
+export const cards: Card[] = [
+    { value: 0, top: '', middle: '', bottom: '' },
+    { value: 1, top: '', middle: '', bottom: '' },
+    { value: 2, top: '', middle: '', bottom: '' },
+    { value: 3, top: '', middle: '', bottom: '' },
+    { value: 4, top: '', middle: '', bottom: '' },
+    { value: 5, top: '', middle: 'Discard 1 card', bottom: '' },
+]
+export const iconMap: Record<number, IconType> = {
+    0: PiNumberZeroFill,
+    1: PiNumberOneFill,
+    2: PiNumberTwoFill,
+    3: PiNumberThreeFill,
+    4: PiNumberFourFill,
+    5: PiNumberFiveFill,
+    6: PiNumberSixFill,
+}
+
+export const iconMap2: Record<number, IconType> = {
+    0: TbPlayCardQFilled,
+    1: TbPlayCard1Filled,
+    2: TbPlayCard2Filled,
+    3: TbPlayCard3Filled,
+    4: TbPlayCard4Filled,
+    5: TbPlayCard5Filled,
+    6: TbPlayCard6Filled,
+}

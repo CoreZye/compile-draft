@@ -40,3 +40,13 @@
   opacity: 0;
   /* Optional: point-events: none; to prevent clicking the 'invisible' div */
 }
+
+.closeBtn {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+}
+.closeBtn svg {
+    background-color: var(--accent-darker) !important;
+    color: #000;
+}

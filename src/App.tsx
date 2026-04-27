@@ -1,20 +1,18 @@
 import './App.css'
-import { useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.css';
+import { useState } from 'react';
+import { CustomProvider } from 'rsuite';
 import {SettingsProvider} from "./context/SettingsProvider.tsx";
 import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { faHome, faUser, faBook, faLineChart, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { VIEWS }  from "@/utils/constants.ts";
 import Draft from "@/components/Draft";
 import Toolbar from "@/components/Toolbar";
 import Home from '@/components/Home';
 import Stats from '@/components/Stats';
 import Codex from '@/components/Codex';
-//import Settings from '@/components/Settings';
 import Profile from '@/components/Profile';
-import { VIEWS}  from "@/utils/constants.ts";
-import { CustomProvider } from 'rsuite';
-import _FactionManager from './components/minor/FactionManager';
 
 export interface MenuItem {
     id: string;

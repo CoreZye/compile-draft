@@ -1,5 +1,5 @@
 import './Toolbar.css';
-import {Badge, Avatar} from 'rsuite';
+import {Badge, Avatar, Modal, ButtonGroup, Button} from 'rsuite';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VIEWS } from "@/utils/constants.ts";
@@ -9,15 +9,30 @@ interface ToolbarProps {
     activeView: string;
     onViewChange: (view: string) => void;
     menu: MenuItem[];
+    beSure?: boolean
 }
-function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
-    const [loggedIn, _setLoggedIn] = useState(true);
+function Toolbar({ activeView, onViewChange, menu, beSure = false }: ToolbarProps) {
+    const [loggedIn] = useState(false);
+    const [chosen, setChosen] = useState<string|null>(null);
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleClick = (proceed: boolean) => {
+        setOpenModal(false);
+        if (proceed) {
+            onViewChange(chosen!);
+        }
+    }
     return (
         <nav className="toolbar">
             {menu.map((item, idx) => {
                 return (
                     <div key={idx} className={'toolbar-item' + (activeView=== item.id ? ' active': '') } onClick={()=> {
-                        onViewChange(item.id);
+                        if (beSure) {
+                            setChosen(item.id);
+                            setOpenModal(true);
+                        } else {
+                            onViewChange(item.id);
+                        }
                     }}>
                         <div className="nav-item">
                             {item.id === VIEWS.PROFILE && loggedIn?
@@ -39,6 +54,26 @@ function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
                     </div>
                 )})
             }
+            <Modal open={openModal} size={'xs'} centered >
+                <Modal.Title style={{fontSize: 24}}>
+                    Are you sure?
+                </Modal.Title>
+                <Modal.Body textAlign={'center'} style={{
+                    margin: 10
+                }}>
+                    You might lose some progress
+                </Modal.Body>
+                <Modal.Footer>
+                    <ButtonGroup justified>
+                        <Button onClick={() => {
+                            handleClick(false)
+                        }}>No</Button>
+                        <Button className={'closeBtn'} onClick={() => {
+                            handleClick(true)
+                        }}>Yes</Button>
+                    </ButtonGroup>
+                </Modal.Footer>
+            </Modal>
         </nav>
     );
 }

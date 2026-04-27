@@ -7,6 +7,7 @@
   --player-1-color: #eb8ce2;
   --player-2-color: #e9a91e;
   --accent: #aa3bff;
+  --accent-darker: #c084fc;
   --accent-bg: rgba(170, 59, 255, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
@@ -42,6 +43,7 @@
     --player-1-color: #eb8ce2;
     --player-2-color: #e9a91e;
     --accent: #c084fc;
+    --accent-darker: #aa51fd;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
     --social-bg: rgba(47, 48, 58, 0.5);

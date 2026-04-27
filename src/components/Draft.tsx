@@ -1,10 +1,12 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
 import {Button, Divider} from 'rsuite';
 import { type DraftItem, COMPETITIVE_SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '../utils/constants.ts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faMapMarker, faHandHolding, faOtter } from '@fortawesome/free-solid-svg-icons';
+import { TbCardsFilled } from "react-icons/tb";
 import './Draft.css'
-import BorderBox from './minor/borderBox.tsx';
+import BorderBox from '@/components//minor/BorderBox.tsx';
+import ProtocolModal, { type ProtocolModalHandle } from './Protocol';
 
 function Draft() {
     const [pool, setPool] = useState<DraftItem[]>(INITIAL_POOL);
@@ -16,6 +18,11 @@ function Draft() {
     const currentDraft = COMPETITIVE_SNAKE_SEQUENCE;
     const isDraftOver = turnIndex >= currentDraft.length;
     const currentStep = currentDraft[turnIndex];
+    const protocolModalRef = useRef<ProtocolModalHandle>(null);
+    const handleOpen = (item: DraftItem) => {
+        protocolModalRef.current?.open(item);
+    };
+
     const hideUnavailable = true;
     const initializePool = (masterItems: DraftItem[], ownedBoxIds: number[]): DraftItem[] => {
         const ownedItemIds = new Set(
@@ -143,6 +150,10 @@ function Draft() {
                     </div>
                     {selectedProtocol &&
                         <div className={'draft-select'}>
+                            <div className={'extraInfo'}>
+                                <TbCardsFilled onClick={() => handleOpen(selectedProtocol)} className={'protocol-info'} size={30}/>
+                                <ProtocolModal ref={protocolModalRef} />
+                            </div>
                             <div className={'selected-protocol'}>
                                 <h4>{selectedProtocol.name}</h4>
                                 <div className={'protocol-info'}>

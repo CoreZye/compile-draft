@@ -1,0 +1,64 @@
+.custom-steps {
+    --rs-steps-icon-state-process: var(--accent);
+}
+.custom-steps svg {
+    position: relative;
+    z-index: 2;
+}
+.custom-steps .rs-steps-item-icon:before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    display: block;
+    background: #000;
+}
+
+.cardImage {
+    position: relative;
+}
+
+.errata {
+    position: absolute;
+    right: 7%;
+}
+
+.errata svg {
+    filter: drop-shadow(0 0 6px #000);
+}
+
+
+.errata.top {
+    top: 24%;
+}
+.errata.middle {
+    top: 48%;
+    right: 10%;
+}
+.errata.bottom {
+    top: 74%
+}
+
+.errataTag {
+    font-weight: 700;
+    text-transform: uppercase;
+    background: red;
+}
+.errataTag span {
+    color: #FFF;
+}
+
+.full-width-tooltip {
+    width: 84vw !important;
+    max-width: none !important;
+    left: 8vw !important;
+    right: 8vw !important;
+    transform: none !important; /* Disables RSuite's auto-positioning logic */
+    border-radius: 0; /* Optional: makes it look more like a bar */
+}
+.full-width-tooltip:after {
+    display: none !important;
+}
