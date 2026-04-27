@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react';
 // Define the shape of your settings
 export interface AppSettings {
     ownedBoxIds: number[];
+    beSure: boolean;
     theme: 'dark' | 'light';
     draftLocked: boolean;
 }
@@ -10,6 +11,7 @@ export interface AppSettings {
 // Define the shape of the Context (settings + updater functions)
 export interface SettingsContextType extends AppSettings {
     setOwnedBoxIds: (ids: number[]) => void;
+    setBeSure: (sure: boolean) => void;
     setTheme: (t: 'dark' | 'light') => void;
     toggleLock: () => void;
 }

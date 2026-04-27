@@ -1,8 +1,7 @@
-import './Profile.css';
+import '@/css/Profile.css';
 import { GoogleLogin } from '@react-oauth/google';
 
 function Profile () {
-
     return (
         <div id={'profile'} className={'wip'}>
             <div style={{
@@ -24,7 +23,7 @@ function Profile () {
                         theme={'filled_black'}
                         allowed_parent_origin={'http://localhost:5173'}
                         onSuccess={credentialResponse => {
-                            console.log(credentialResponse); // This is your user data!
+                            console.log(credentialResponse);
                         }}
                         onError={() => {
                             console.log('Login Failed');

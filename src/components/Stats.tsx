@@ -1,7 +1,8 @@
-import './Stats.css';
+import '@/css/Stats.css';
 import React, { useEffect } from 'react';
-import {Table, type SortType, Nav, Panel} from 'rsuite';
-import {INITIAL_POOL} from '@/utils/constants'
+import { Table, type SortType, Nav, Panel } from 'rsuite';
+import { INITIAL_POOL } from '@/utils/constants';
+
 const { Column, HeaderCell, Cell } = Table;
 
 function getRandomIntInclusive(min: number, max: number) {

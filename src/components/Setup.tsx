@@ -1,6 +1,6 @@
-import {PACKS, INITIAL_POOL} from '../utils/constants';
-import {Checkbox, CheckboxGroup, HStack, VStack, Stack, Input, Text, Button} from 'rsuite';
-import {useSettings} from "../context/SettingContext.ts";
+import { Checkbox, CheckboxGroup, HStack, VStack, Stack, Input, Text, Button } from 'rsuite';
+import { PACKS, INITIAL_POOL } from '@/utils/constants';
+import { useSettings } from "@/context/SettingContext.ts";
 
 
 interface Range {

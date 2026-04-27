@@ -1,4 +1,4 @@
-import './Protocol.css'
+import '@/css/Protocol.css'
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import {
     Modal,
@@ -14,9 +14,9 @@ import {
     Whisper,
     Tooltip
 } from 'rsuite';
-import {iconMap, cards, type DraftItem} from '../utils/constants.ts';
-import compileCard from '@/assets/compile-card.webp';
 import {Close, Star} from "@rsuite/icons";
+import {iconMap, cards, type DraftItem} from '@/utils/constants.ts';
+import compileCard from '@/assets/compile-card.webp';
 
 export interface ProtocolModalHandle {
     open: (protocol: DraftItem) => void;

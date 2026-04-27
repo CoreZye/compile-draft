@@ -5,6 +5,7 @@ const LOCAL_STORAGE_KEY = 'draft_tool_v1_settings';
 
 const DEFAULT_SETTINGS: AppSettings = {
     ownedBoxIds: [],
+    beSure: false,
     theme: 'dark',
     draftLocked: false,
 };
@@ -32,6 +33,10 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
         setSettings(prev => ({ ...prev, ownedBoxIds: ids }));
     };
 
+    const setBeSure = (sure: boolean) => {
+        setSettings(prev => ({ ...prev, beSure: sure }));
+    };
+
     const setTheme = (theme: 'dark' | 'light') => {
         setSettings(prev => ({ ...prev, theme }));
     };
@@ -44,6 +49,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     const contextValue = useMemo(() => ({
         ...settings,
         setOwnedBoxIds,
+        setBeSure,
         setTheme,
         toggleLock
     }), [settings]);

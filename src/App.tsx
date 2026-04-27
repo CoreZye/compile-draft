@@ -1,8 +1,8 @@
-import './App.css'
+import '@/css/App.css'
 import '@fortawesome/fontawesome-free/css/all.css';
 import { useState } from 'react';
 import { CustomProvider } from 'rsuite';
-import {SettingsProvider} from "./context/SettingsProvider.tsx";
+import { SettingsProvider } from "@/context/SettingsProvider.tsx";
 import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { faHome, faUser, faBook, faLineChart, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';

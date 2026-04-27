@@ -1,8 +1,7 @@
-import './Codex.css'
+import '@/css/Codex.css'
 import { useRef } from 'react';
-import {type DraftItem, INITIAL_POOL} from "@/utils/constants";
-import ProtocolModal, { type ProtocolModalHandle } from './Protocol';
-
+import { type DraftItem, INITIAL_POOL } from "@/utils/constants";
+import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 
 function Codex () {
     const protocolModalRef = useRef<ProtocolModalHandle>(null);

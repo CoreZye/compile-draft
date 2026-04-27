@@ -1,9 +1,10 @@
-import './Toolbar.css';
-import {Badge, Avatar, Modal, ButtonGroup, Button} from 'rsuite';
+import '@/css/Toolbar.css';
+import { Badge, Avatar, Modal, ButtonGroup, Button, Text } from 'rsuite';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VIEWS } from "@/utils/constants.ts";
 import { type MenuItem } from '@/App';
+import { useSettings } from "@/context/SettingContext.ts";
 
 interface ToolbarProps {
     activeView: string;
@@ -11,7 +12,8 @@ interface ToolbarProps {
     menu: MenuItem[];
     beSure?: boolean
 }
-function Toolbar({ activeView, onViewChange, menu, beSure = false }: ToolbarProps) {
+function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
+    const {beSure, setBeSure } = useSettings();
     const [loggedIn] = useState(false);
     const [chosen, setChosen] = useState<string|null>(null);
     const [openModal, setOpenModal] = useState(false);
@@ -20,20 +22,25 @@ function Toolbar({ activeView, onViewChange, menu, beSure = false }: ToolbarProp
         setOpenModal(false);
         if (proceed) {
             onViewChange(chosen!);
+            setBeSure(false);
         }
     }
     return (
         <nav className="toolbar">
             {menu.map((item, idx) => {
                 return (
-                    <div key={idx} className={'toolbar-item' + (activeView=== item.id ? ' active': '') } onClick={()=> {
-                        if (beSure) {
-                            setChosen(item.id);
-                            setOpenModal(true);
-                        } else {
-                            onViewChange(item.id);
-                        }
-                    }}>
+                    <div key={idx} className={'toolbar-item' + (activeView === item.id ? ' active': '') } 
+                        onClick={()=> {
+                            if (activeView !== item.id) {
+                                if (beSure) {
+                                    setChosen(item.id);
+                                    setOpenModal(true);
+                                } else {
+                                    onViewChange(item.id);
+                                }
+                            }
+                        }}
+                    >
                         <div className="nav-item">
                             {item.id === VIEWS.PROFILE && loggedIn?
                                 <Badge content={2} shape="circle" invisible>
@@ -58,10 +65,15 @@ function Toolbar({ activeView, onViewChange, menu, beSure = false }: ToolbarProp
                 <Modal.Title style={{fontSize: 24}}>
                     Are you sure?
                 </Modal.Title>
-                <Modal.Body textAlign={'center'} style={{
-                    margin: 10
-                }}>
-                    You might lose some progress
+                <Modal.Body 
+                    textAlign={'center'} 
+                    style={{
+                        margin: 20
+                    }}
+                >
+                    <Text>
+                        You might lose some progress
+                    </Text>
                 </Modal.Body>
                 <Modal.Footer>
                     <ButtonGroup justified>

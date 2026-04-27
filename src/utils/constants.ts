@@ -1,10 +1,9 @@
 import compileOneBackground from '../assets/compile-1.png';
+import { PiNumberZeroFill, PiNumberOneFill, PiNumberTwoFill, PiNumberThreeFill, PiNumberFourFill, PiNumberFiveFill, PiNumberSixFill } from "react-icons/pi";
+import { type IconType } from 'react-icons';
 
 export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'OTHER';
 export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'OTHER';
-import { PiNumberZeroFill, PiNumberOneFill, PiNumberTwoFill, PiNumberThreeFill, PiNumberFourFill, PiNumberFiveFill, PiNumberSixFill } from "react-icons/pi";
-import { TbPlayCardQFilled, TbPlayCard1Filled, TbPlayCard2Filled, TbPlayCard3Filled, TbPlayCard4Filled, TbPlayCard5Filled, TbPlayCard6Filled } from "react-icons/tb";
-import { type IconType} from 'react-icons';
 
 export interface DraftStep {
     player: number;
@@ -119,14 +118,4 @@ export const iconMap: Record<number, IconType> = {
     4: PiNumberFourFill,
     5: PiNumberFiveFill,
     6: PiNumberSixFill,
-}
-
-export const iconMap2: Record<number, IconType> = {
-    0: TbPlayCardQFilled,
-    1: TbPlayCard1Filled,
-    2: TbPlayCard2Filled,
-    3: TbPlayCard3Filled,
-    4: TbPlayCard4Filled,
-    5: TbPlayCard5Filled,
-    6: TbPlayCard6Filled,
 }

@@ -1,8 +1,10 @@
+import '@/css/reset.css'
+import '@/css/index.css'
+import 'rsuite/dist/rsuite.css';
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './css/reset.css'
-import './index.css'
-import 'rsuite/dist/rsuite.css';
+
+
 import App from './App.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
 

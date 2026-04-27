@@ -1,14 +1,16 @@
-import {useRef, useState} from 'react';
-import {Button, Divider} from 'rsuite';
-import { type DraftItem, COMPETITIVE_SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '../utils/constants.ts'
+import '@/css/Draft.css'
+import { useRef, useState } from 'react';
+import { Button, Divider } from 'rsuite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBan, faMapMarker, faHandHolding, faOtter } from '@fortawesome/free-solid-svg-icons';
 import { TbCardsFilled } from "react-icons/tb";
-import './Draft.css'
+import { type DraftItem, COMPETITIVE_SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '@/utils/constants.ts'
+import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 import BorderBox from '@/components//minor/BorderBox.tsx';
-import ProtocolModal, { type ProtocolModalHandle } from './Protocol';
+import { useSettings } from "@/context/SettingContext.ts";
 
 function Draft() {
+    const { setBeSure } = useSettings();
     const [pool, setPool] = useState<DraftItem[]>(INITIAL_POOL);
     const [parties, setParties] = useState<DraftItem[][]>([[], []]);
     const [turnIndex, setTurnIndex] = useState<number>(0);
@@ -42,6 +44,7 @@ function Draft() {
         setPool(initialPool);
         setTurnIndex(0);
         setDraftActive(true);
+        setBeSure(true);
     };
 
     const handleAction = (selectedItem: DraftItem) => {
