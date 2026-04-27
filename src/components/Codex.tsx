@@ -1,8 +1,12 @@
+import './Codex.css'
+import compileCard from '@/assets/compile-card.webp';
 import { INITIAL_POOL } from "@/utils/constants";
-import { useState } from 'react';
-import { Accordion, Steps, Card, Tag, TagGroup, Grid, Row, Col } from 'rsuite';
+import { useState, useEffect, useRef } from 'react';
+import { Accordion, Steps, Card, Tag, TagGroup, Divider, Text, HStack } from 'rsuite';
 import { type IconType} from 'react-icons';
-import { TbNumber0, TbNumber1, TbNumber2, TbNumber3, TbNumber4, TbNumber5, TbNumber6,  } from "react-icons/tb";
+//import { TbNumber0, TbNumber1, TbNumber2, TbNumber3, TbNumber4, TbNumber5, TbNumber6,  } from "react-icons/tb";
+import { PiNumberZeroFill, PiNumberOneFill, PiNumberTwoFill, PiNumberThreeFill, PiNumberFourFill, PiNumberFiveFill, PiNumberSixFill } from "react-icons/pi";
+ 
 
 interface Card {
     value: number;
@@ -19,62 +23,96 @@ const cards: Card[] = [
     { value: 5, top: '', middle: 'Discard 1 card', bottom: '' },
 ]
 const iconMap: Record<number, IconType> = {
-    0: TbNumber0,
-    1: TbNumber1,
-    2: TbNumber2,
-    3: TbNumber3,
-    4: TbNumber4,
-    5: TbNumber5,
-    6: TbNumber6,
+    0: PiNumberZeroFill,
+    1: PiNumberOneFill,
+    2: PiNumberTwoFill,
+    3: PiNumberThreeFill,
+    4: PiNumberFourFill,
+    5: PiNumberFiveFill,
+    6: PiNumberSixFill,
 }
 
 function Codex () {
-    const [current, setCurrent] = useState(3);
+    const [currentStep, setCurrentStep] = useState<number>(1);
+    const [activeProtocol, setActiveProtocol] = useState<number>(0);
+    const panelRefs = useRef<Record<string | number, HTMLDivElement | null>>({});
+
+    useEffect(() => {
+        const container = document.getElementById('app')
+        const timer = setTimeout(() => {
+        if (container) {
+                const targetPosition = ((activeProtocol-1) * 44);
+                console.log(activeProtocol, targetPosition);
+
+                container.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth',
+                });
+            }
+        }, 10)
+        return () => clearTimeout(timer)
+    }, [activeProtocol]);
 
     return (
         <div id={'codex'} >
-            <Accordion defaultActiveKey={1} >
+            <Accordion 
+                defaultActiveKey={activeProtocol} 
+            >
                 {INITIAL_POOL.map((protocol) => {
                     return (
-                        <Accordion.Panel key={protocol.id} header={protocol.name} eventKey={protocol.id}>
+                        <Accordion.Panel 
+                            key={protocol.id} 
+                            header={protocol.name} 
+                            eventKey={protocol.id}
+                            onSelect={() => {
+                                setActiveProtocol(protocol.id);
+                                setCurrentStep(1);
+                            }}
+                            ref={(el: HTMLDivElement | null) => {
+                                if (el) {
+                                    panelRefs.current[protocol.id] = el;
+                                }
+                            }}
+                        >
                             <div>
-                                <Grid fluid>
-                                    <Row>
-                                        <Col span={3}>
-                                            <Steps current={current} small vertical >
-                                                {cards.map((card, idx) => {
-                                                    const cardIdx = idx+1;
-                                                    const Icon = iconMap[card.value];
-                                                    return (
-                                                        <>
-                                                            <Steps.Item
-                                                                icon={<Icon size={26} />}
-                                                                status={current === cardIdx ? 'process' : 'wait'}
-                                                                onClick={() => {
-                                                                    setCurrent(cardIdx)
-                                                                }}
-                                                            />
-                                                        </>
-                                                    )
-                                                })}
-                                            </Steps>
-                                        </Col>
-                                        <Col span={21}>
-                                            <Card shaded>
-                                                <img
-                                                    src="https://images.unsplash.com/photo-1576606539605-b2a44fa58467?q=80&w=1974"
-                                                    alt="Shadow"
+                                <Divider/>
+                                <Text align={'center'}>
+                                    {protocol.flavor}
+                                </Text>
+                                <Text align={'center'} muted >
+                                    <i>{protocol.info}</i>
+                                </Text>
+                                <Divider/>
+                                <Steps current={currentStep} small >
+                                    {cards.map((card, idx) => {
+                                        const cardIdx = idx+1;
+                                        const Icon = iconMap[card.value];
+                                        return (
+                                            <>
+                                                <Steps.Item
+                                                    icon={<Icon size={26} />}
+                                                    status={currentStep === cardIdx ? 'process' : 'wait'}
+                                                    onClick={() => {
+                                                        setCurrentStep(cardIdx)
+                                                    }}
                                                 />
-                                                <Card.Body>
-                                                    <TagGroup>
-                                                        <Tag size="sm">Flip</Tag>
-                                                        <Tag size="sm">Draw</Tag>
-                                                    </TagGroup>
-                                                </Card.Body>
-                                            </Card>
-                                        </Col>
-                                    </Row>
-                                </Grid>
+                                            </>
+                                        )
+                                    })}
+                                </Steps>
+                                <Divider/>
+                                <HStack justify={'center'}>
+                                     <TagGroup>
+                                            <Tag size="sm">Flip</Tag>
+                                            <Tag size="sm">Draw</Tag>
+                                        </TagGroup>
+                                </HStack>
+                                <Divider/>
+                                <img
+                                    src={compileCard}
+                                    alt="Shadow"
+                                />
+                                <Divider/>
                             </div>
                         </Accordion.Panel>
                     )

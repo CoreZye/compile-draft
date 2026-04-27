@@ -60,7 +60,7 @@ function App() {
         <div id={'main'}>
             <CustomProvider theme={'dark'}>
                 <SettingsProvider>
-                    <div className='app'>
+                    <div className='app' id='app'>
                         <ActivePage />
                     </div>
                     <Toolbar menu={menu} activeView={activeView} onViewChange={updateActiveComponent}/>

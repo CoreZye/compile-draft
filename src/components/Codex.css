@@ -1,0 +1,33 @@
+.rs-panel-header {
+    padding: 0 !important;
+}
+
+.rs-panel-btn {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.rs-panel-btn:hover, .rs-panel-btn:focus, .rs-panel-btn:active {
+    background-color: transparent !important;
+}
+
+.rs-panel-group > .rs-panel + .rs-panel::before {
+    content: none;
+}
+.rs-panel-body {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 0;
+}
+
+.rs-anim-collapse, 
+.rs-anim-collapsing,
+.rs-anim-in,
+.rs-panel-group .rs-panel-body-collapse {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Force the panel to stop "sliding" and just be there */
+.collapse.in {
+    transition: none !important;
+}
