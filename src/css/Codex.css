@@ -67,3 +67,30 @@
     top: 15px;
     right: 0;
 }
+
+#codex .protocol {
+    position: relative;
+    overflow: hidden;
+}
+.protocol-banner {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px;
+    border: 2px solid #333;
+    width: 150px;
+    position: absolute;
+    top: 5px;
+    right: -55px;
+    color: #333;
+    transform: rotateZ(45deg);
+    box-shadow: 1px 1px 8px #333;
+}
+.protocol-banner.cycle-1 {
+    background: var(--cycle-1-color);
+}
+.protocol-banner.cycle-2 {
+    background: var(--cycle-2-color);
+}
+.protocol-banner.cycle-3 {
+    background: var(--cycle-3-color);
+}

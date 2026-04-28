@@ -24,6 +24,9 @@
     height: 100%;
 }
 
+.rs-toggle-inner {
+    color: #000;
+}
 .rs-divider {
     border-color: var(--border-light);
 }

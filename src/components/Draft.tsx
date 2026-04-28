@@ -1,11 +1,12 @@
 import '@/css/Draft.css'
 import { useRef, useState } from 'react';
-import { Button, Divider } from 'rsuite';
+import {Button, Divider, Toggle, HStack, Text, Heading, SelectPicker, Box, Input } from 'rsuite';
 import { TbCardsFilled } from "react-icons/tb";
 import { 
-    type DraftItem, 
-    COMPETITIVE_SNAKE_DRAFT as _COMPETITIVE_SNAKE_DRAFT,
-    RANDOM_DRAFT as _RANDOM_DRAFT,
+    type DraftItem,
+    SNAKE_DRAFT,
+    COMPETITIVE_SNAKE_DRAFT,
+    RANDOM_DRAFT,
     INITIAL_POOL, 
     PACKS, 
     MAX_DRAFT
@@ -13,21 +14,28 @@ import {
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 import BorderBox from '@/components//minor/BorderBox.tsx';
 import { useSettings } from "@/context/SettingContext.ts";
-import { GiCardPlay, GiCardRandom, GiCardDraw as _a, GiCardExchange } from "react-icons/gi";
-import { PiHandDepositFill, PiHandDepositBold as _b, PiHand as _c  } from "react-icons/pi";
-import { FaBan, FaHandHolding as _d } from "react-icons/fa";
+import { GiCardPlay, GiCardRandom, GiCardExchange } from "react-icons/gi";
+import { PiHandDepositFill } from "react-icons/pi";
+import { FaBan } from "react-icons/fa";
+import {Close, Check} from '@rsuite/icons';
 
 function Draft() {
-    const { setBeSure, ownedBoxIds } = useSettings();
+    const { setBeSure, ownedBoxIds, name, lastPlayerOneName, lastPlayerTwoName, setPlayerNames } = useSettings();
     const [pool, setPool] = useState<DraftItem[]>(INITIAL_POOL);
     const [parties, setParties] = useState<DraftItem[][]>([[], []]);
     const [turnIndex, setTurnIndex] = useState<number>(0);
     const [draftActive, setDraftActive] = useState<boolean>(false);
     const [selectedProtocol, setSelectedProtocol] = useState<DraftItem|null>(null);
-    const currentDraft = _RANDOM_DRAFT;
+    const [currentDraft, setCurrentDraft] = useState(SNAKE_DRAFT);
     const isDraftOver = turnIndex >= currentDraft.length;
     const currentStep = currentDraft[turnIndex];
     const protocolModalRef = useRef<ProtocolModalHandle>(null);
+
+    const [random, setRandom] = useState(true);
+    const [opponentStart, setOpponentStart] = useState(false);
+    const [onlineDraft, setOnlineDraft] = useState(false);
+    const [playerOne, setPlayerOne] = useState(lastPlayerOneName ?? name ?? 'Me')
+    const [playerTwo, setPlayerTwo] = useState(lastPlayerTwoName ?? 'Opponent')
     const handleOpen = (item: DraftItem) => {
         protocolModalRef.current?.open(item);
     };
@@ -48,11 +56,14 @@ function Draft() {
 
     const startDraft = () => {
         const initialPool = initializePool(INITIAL_POOL, ownedBoxIds);
-        console.log(initialPool, ownedBoxIds);
+        if (random) {
+            setOpponentStart(Math.random() < 0.5)
+        }
         setPool(initialPool);
         setTurnIndex(0);
         setDraftActive(true);
         setBeSure(true);
+        setPlayerNames(playerOne, playerTwo);
     };
 
     const handleAction = (selectedItem: DraftItem) => {
@@ -79,13 +90,29 @@ function Draft() {
         setTurnIndex((prev) => prev + 1);
     };
 
+    const players: Record<number, string> = {
+        0: opponentStart ? playerTwo : playerOne,
+        1: !opponentStart ? playerTwo : playerOne,
+    }
+    const draftPool = [
+        { group: 'Default', label: 'Normal Draft', value: SNAKE_DRAFT },
+        { group: 'Default', label: 'Competitive Draft', value: COMPETITIVE_SNAKE_DRAFT },
+        { group: 'Default', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
+    ]
     return (
         <>
             {draftActive ?
                 <>
                     <div className={'draft-header'}>
                         {parties.map((playerItems, playerIdx) => {
-                            const playerName = 'Player ' + (playerIdx + 1);
+                            const playerName = players[playerIdx]
                             return (
                                 <section key={playerIdx} className={"protocol-draft" + (' player-'+playerIdx)}>
                                     <h4 className={'player-name'}>{playerName}</h4>
@@ -108,10 +135,10 @@ function Draft() {
                                                 ;
 
                                             return (
-                                                <BorderBox 
-                                                    key={slotIdx} 
-                                                    active={isCurrent} 
-                                                    className={'picked-protocol'} 
+                                                <BorderBox
+                                                    key={slotIdx}
+                                                    active={isCurrent}
+                                                    className={'picked-protocol'}
                                                 >
                                                     {item ? (
                                                         <span>{item.name}</span>
@@ -128,10 +155,10 @@ function Draft() {
                         <div className={'draft-steps'}>
                             {currentDraft.map((step, idx) => {
                                 return (
-                                    <span key={idx} 
+                                    <span key={idx}
                                         className={
-                                            'step' + 
-                                            (' player-' + step.player) + 
+                                            'step' +
+                                            (' player-' + step.player) +
                                             (idx < turnIndex ? ' done' : '') +
                                             (step === currentStep ? ' active' : '')
                                         }
@@ -212,18 +239,60 @@ function Draft() {
                 </>
                 :
                 <>
-                    <div style={{whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
-                        {`
-                            Pick Start player vs Random
-                            Pick Draft type
-                            Use Names or not?
-                            Share screen or join by Code
+                    <div className={'pre-draft'}>
+                        <div className={'draft-options'}>
 
-                        `.trim().replace(/^\s+/gm, '')}
-                    </div>
-                    <div style={{display: 'flex', flexGrow: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        
-                        <Button onClick={startDraft}>Start Draft</Button>
+                            <Divider spacing={25} >
+                                <Heading level={4}>Drafting Tool setup</Heading>
+                            </Divider>
+                            <Toggle width={200}
+                                    labelPlacement={'start'}
+                                    label={'Starting player:'}
+                                    size={'xl'}
+                                    checkedChildren="Random"
+                                    unCheckedChildren="Selected"
+                                    checked={random}
+                                    onChange={setRandom}
+                            />
+                            <Divider spacing={20}/>
+                            <HStack spacing={10} className={'double-sided-toggle'}>
+                                <Input className={'line-input player-1 ' + (!random ? (opponentStart ? '': 'start') : '')} value={playerOne} onChange={setPlayerOne}/>
+                                <Toggle disabled={random} checked={opponentStart} onChange={setOpponentStart} className={'dst'} size={'xl'}/>
+                                <Input className={'line-input player-2 ' + (!random ? (opponentStart ? 'start': '') : '')} value={playerTwo} onChange={setPlayerTwo} style={{textAlign: 'right'}} />
+                            </HStack>
+                            <Divider spacing={20}/>
+                            <SelectPicker
+                                size="lg"
+                                placeholder="Select draft type"
+                                data={draftPool}
+                                value={currentDraft}
+                                onSelect={setCurrentDraft}
+                                groupBy={'group'}
+                                block
+                            />
+                            <Divider spacing={20}/>
+                            <Toggle width={200}
+                                    labelPlacement={'start'}
+                                    label={'Online Draft?'}
+                                    size={'xl'}
+                                    checkedChildren={<Check />}
+                                    unCheckedChildren={<Close />}
+                                    checked={onlineDraft}
+                                    onChange={setOnlineDraft}
+                            />
+                            {onlineDraft &&
+                                <Box style={{marginTop: 10}}>
+                                    <Text size={15} muted align={'center'}>
+                                        a code will be generated for another player to join the room, and draft on two seperate devices [NYI]
+                                    </Text>
+                                </Box>
+                            }
+                            <Divider spacing={20}/>
+
+                        </div>
+                        <div className={'start-draft'}>
+                            <Button className={'closeBtn'} onClick={startDraft}>Start Draft</Button>
+                        </div>
                     </div>
                 </>
             }
@@ -234,6 +303,12 @@ function Draft() {
 export default Draft;
 
 /*
+
+                                    Pick Start player vs Random
+                                    Pick Draft type
+                                    Use Names or not?
+                                    Share screen or join by Code
+
 Avoid "Look-alike" Characters
 To make it user-friendly (so people don't ask "Is that an 'O' or a '0'?"), 
 use a reduced alphabet. Remove 0, O, 1, I, L, and S/5.If you use a 30-character set ($A-Z$ minus confusing 

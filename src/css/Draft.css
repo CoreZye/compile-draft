@@ -1,3 +1,61 @@
+.draft {
+  /*display: flex;*/
+  /*flex-direction: column;*/
+}
+
+.pre-draft {
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  align-items: start;
+}
+
+.draft-options,
+.start-draft {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+
+}
+
+.draft-options {
+  max-height: calc(100dvh - 150px);
+  overflow: scroll;
+}
+.draft-options > label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.draft-options > label .rs-toggle-track {
+  justify-self: end;
+}
+.start-draft {
+  align-self: end;
+}
+.double-sided-toggle {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.start-draft button {
+  width: 100%
+}
+
+.line-input {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  background: transparent;
+  outline: none !important;
+}
+.line-input:focus {
+  border-color: var(--accent);
+}
+
 .status-pick {
   cursor: not-allowed;
   /*transform: scaleY(-1);*/
@@ -240,3 +298,22 @@ h4 {
 .step.active:after {
   border-color: white;
 }
+
+
+.player-1.start {
+  color: var(--player-1-color);
+}
+.player-2.start {
+  color: var(--player-2-color);
+}
+
+.dst[data-disabled="true"] span.rs-toggle-track {
+  background-color: #ccc !important;
+}
+.dst .rs-toggle-track  {
+  background-color: var(--player-1-color) !important;  /* Your accent color for ON */
+}
+.dst[data-checked="true"] .rs-toggle-track  {
+  background-color: var(--player-2-color) !important;  /* Your accent color for ON */
+}
+

@@ -1,6 +1,6 @@
+import 'rsuite/dist/rsuite.css';
 import '@/css/reset.css'
 import '@/css/index.css'
-import 'rsuite/dist/rsuite.css';
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 

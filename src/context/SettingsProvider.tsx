@@ -16,6 +16,8 @@ const DEFAULT_SETTINGS: AppSettings = {
     subject: '',
     image: undefined,
     draftLocked: false,
+    lastPlayerOneName: undefined,
+    lastPlayerTwoName: undefined
 };
 
 interface CustomJwtPayload extends JwtPayload {
@@ -59,6 +61,10 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
         setSettings(prev => ({ ...prev, draftLocked: !prev.draftLocked }));
     };
 
+    const setPlayerNames = (nameOne: string, nameTwo: string) => {
+        setSettings(prev => ({ ...prev, lastPlayerOneName: nameOne, lastPlayerTwoName: nameTwo }));
+    };
+
     const login = (token: string) => {
         const decoded = jwtDecode<CustomJwtPayload>(token);
         setSettings(prev => ({ ...prev, 
@@ -73,7 +79,13 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
     }
 
     const logout = () => {
-        setSettings(prev => ({ ...prev, isLoggedIn: false }));
+        setSettings(prev => ({ ...prev,
+            isLoggedIn: false,
+            name: undefined,
+            subject: undefined,
+            email: undefined,
+            family: undefined
+        }));
     }
 
     // 4. Memoize the value to prevent unnecessary re-renders of consumers
@@ -85,7 +97,7 @@ export const SettingsProvider = ({ children }: { children: React.ReactNode }) =>
         login,
         logout,
         toggleLock,
-        
+        setPlayerNames,
     }), [settings]);
 
     return (

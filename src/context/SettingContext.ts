@@ -13,6 +13,8 @@ export interface AppSettings {
     image: string | undefined;
     theme: 'dark' | 'light';
     draftLocked: boolean;
+    lastPlayerOneName: string | undefined;
+    lastPlayerTwoName: string | undefined;
 }
 
 // Define the shape of the Context (settings + updater functions)
@@ -23,6 +25,7 @@ export interface SettingsContextType extends AppSettings {
     logout: () => void;
     setTheme: (t: 'dark' | 'light') => void;
     toggleLock: () => void;
+    setPlayerNames: (nameOne: string, nameTwo: string) => void;
 }
 
 // Create the context

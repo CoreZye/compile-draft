@@ -62,3 +62,18 @@
 .full-width-tooltip:after {
     display: none !important;
 }
+
+.pack-name span {
+    color: #333;
+    font-weight: 700;
+}
+
+.pack-name.cycle-1 {
+    background: var(--cycle-1-color);
+}
+.pack-name.cycle-2 {
+    background: var(--cycle-2-color);
+}
+.pack-name.cycle-3 {
+    background: var(--cycle-3-color);
+}

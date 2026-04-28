@@ -52,7 +52,13 @@
     --cycle-1-color: #eb8ce2;
     --cycle-2-color: #e9a91e;
     --cycle-3-color: red;
+
   }
+}
+:root body.rs-theme-dark {
+  --rs-toggle-checked-bg: var(--accent);
+  --rs-toggle-checked-hover-bg: var(--accent);
+  --rs-toggle-thumb: var(--accent-darker);
 }
 
 #root {

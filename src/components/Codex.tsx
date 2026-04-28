@@ -1,6 +1,6 @@
 import '@/css/Codex.css'
 import { useRef } from 'react';
-import { type DraftItem, INITIAL_POOL } from "@/utils/constants";
+import { type DraftItem, INITIAL_POOL, PACKS } from "@/utils/constants";
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 
 function Codex () {
@@ -13,17 +13,24 @@ function Codex () {
         <div id={'codex'} >
             <div className={'pool'}>
                 {INITIAL_POOL.map((protocol) => {
+                    const pack = PACKS.find((pack) =>  (
+                        pack.contains.includes(protocol.id)
+                    ))
                     return (
                         <button
                             key={protocol.id}
                             onClick={() => handleOpen(protocol)}
                             className={'protocol'}
                         >
-                            <div className={'protocol-sprite'} style={{
-                                backgroundImage: `url(${protocol.image})`,
-                                backgroundPosition: `${protocol.x}% ${protocol.y}%`
-                            }}>
-                            </div>
+                            {pack &&
+                                <div className={'protocol-banner ' + ('cycle-' + pack.cycle)}>{pack.name}</div>
+                            }
+                            <div className={'protocol-sprite'}
+                                 style={{
+                                     backgroundImage: `url(${protocol.image})`,
+                                     backgroundPosition: `${protocol.x}% ${protocol.y}%`
+                                }}
+                            ></div>
                         </button>
                     )
                 })}
