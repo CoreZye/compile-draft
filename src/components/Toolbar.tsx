@@ -1,7 +1,6 @@
 import '@/css/Toolbar.css';
 import { Badge, Avatar, Modal, ButtonGroup, Button, Text } from 'rsuite';
 import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { VIEWS } from "@/utils/constants.ts";
 import { type MenuItem } from '@/App';
 import { useSettings } from "@/context/SettingContext.ts";
@@ -46,12 +45,12 @@ function Toolbar({ activeView, onViewChange, menu }: ToolbarProps) {
                                     <Avatar 
                                         src={image}
                                         circle size={'md'} 
-                                        style={{marginBottom: '2.5px'}} 
+                                        style={{marginBottom: '4px'}} 
                                     />
                                 </Badge>
                                 :
                                 <>
-                                    <FontAwesomeIcon icon={item.icon} size={'lg'} />
+                                    <item.icon size={24} />
                                     {item.title}
                                 </>
                             }

@@ -1,11 +1,8 @@
 import '@/css/App.css'
-import '@fortawesome/fontawesome-free/css/all.css';
 import { useState } from 'react';
 import { CustomProvider } from 'rsuite';
 import { SettingsProvider } from "@/context/SettingsProvider.tsx";
 import { useGoogleOneTapLogin } from '@react-oauth/google';
-import { faHome, faUser, faBook, faLineChart, faCrosshairs } from '@fortawesome/free-solid-svg-icons';
-import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { VIEWS }  from "@/utils/constants.ts";
 import Draft from "@/components/Draft";
 import Toolbar from "@/components/Toolbar";
@@ -13,20 +10,24 @@ import Home from '@/components/Home';
 import Stats from '@/components/Stats';
 import Codex from '@/components/Codex';
 import Profile from '@/components/Profile';
+import { type IconType } from 'react-icons';
+import { GiCardExchange } from "react-icons/gi";
+import { FaBook, FaHome, FaUser } from "react-icons/fa";
+import { FaChartLine } from "react-icons/fa6";
 
 export interface MenuItem {
     id: string;
     title: string;
-    icon: IconDefinition;
+    icon: IconType;
     component: React.FC
 }
 
 const menu : MenuItem[] = [
-    { id: VIEWS.HOME, title: 'Home', icon: faHome, component: Home },
-    { id: VIEWS.STATS, title: 'Stats', icon: faLineChart, component: Stats },
-    { id: VIEWS.DRAFT, title: 'Draft', icon: faCrosshairs, component: Draft },
-    { id: VIEWS.CODEX, title: 'Codex', icon: faBook, component: Codex },
-    { id: VIEWS.PROFILE, title: 'Profile', icon: faUser, component: Profile },
+    { id: VIEWS.HOME, title: 'Home', icon: FaHome, component: Home },
+    { id: VIEWS.STATS, title: 'Stats', icon: FaChartLine, component: Stats },
+    { id: VIEWS.DRAFT, title: 'Draft', icon: GiCardExchange, component: Draft },
+    { id: VIEWS.CODEX, title: 'Codex', icon: FaBook, component: Codex },
+    { id: VIEWS.PROFILE, title: 'Profile', icon: FaUser, component: Profile },
 ]
 const lsActiveComp = 'activeComponent';
 
