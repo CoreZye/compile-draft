@@ -2,8 +2,8 @@ import compileOneBackground from '../assets/compile-1.png';
 import { PiNumberZeroFill, PiNumberOneFill, PiNumberTwoFill, PiNumberThreeFill, PiNumberFourFill, PiNumberFiveFill, PiNumberSixFill } from "react-icons/pi";
 import { type IconType } from 'react-icons';
 
-export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'OTHER';
-export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'OTHER';
+export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'RANDOM' | 'OTHER';
+export type DraftItemStatus = 'PICK' | 'BAN' | 'GIVE' | 'AVAILABLE' | 'UNAVAILABLE' | 'RANDOM' | 'OTHER';
 
 export interface DraftStep {
     player: number;
@@ -19,7 +19,7 @@ export interface DraftItem {
     flavor: string;
     info: string;
 }
-export const SNAKE_SEQUENCE: DraftStep[] = [
+export const SNAKE_DRAFT: DraftStep[] = [
     { player: 0, action: 'PICK' },
     { player: 1, action: 'PICK' },
     { player: 1, action: 'PICK' },
@@ -28,7 +28,16 @@ export const SNAKE_SEQUENCE: DraftStep[] = [
     { player: 1, action: 'PICK' },
 ];
 
-export const COMPETITIVE_SNAKE_SEQUENCE: DraftStep[] = [
+export const RANDOM_DRAFT: DraftStep[] = [
+    { player: 0, action: 'RANDOM' },
+    { player: 1, action: 'RANDOM' },
+    { player: 1, action: 'RANDOM' },
+    { player: 0, action: 'RANDOM' },
+    { player: 0, action: 'RANDOM' },
+    { player: 1, action: 'RANDOM' },
+]
+
+export const COMPETITIVE_SNAKE_DRAFT: DraftStep[] = [
     { player: 0, action: 'BAN' },
     { player: 1, action: 'BAN' },
     { player: 1, action: 'BAN' },

@@ -1,13 +1,21 @@
 import '@/css/Draft.css'
 import { useRef, useState } from 'react';
 import { Button, Divider } from 'rsuite';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faMapMarker, faHandHolding, faOtter } from '@fortawesome/free-solid-svg-icons';
 import { TbCardsFilled } from "react-icons/tb";
-import { type DraftItem, COMPETITIVE_SNAKE_SEQUENCE, INITIAL_POOL, PACKS, MAX_DRAFT} from '@/utils/constants.ts'
+import { 
+    type DraftItem, 
+    COMPETITIVE_SNAKE_DRAFT as _COMPETITIVE_SNAKE_DRAFT,
+    RANDOM_DRAFT as _RANDOM_DRAFT,
+    INITIAL_POOL, 
+    PACKS, 
+    MAX_DRAFT
+} from '@/utils/constants.ts'
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 import BorderBox from '@/components//minor/BorderBox.tsx';
 import { useSettings } from "@/context/SettingContext.ts";
+import { GiCardPlay, GiCardRandom, GiCardDraw as _a, GiCardExchange } from "react-icons/gi";
+import { PiHandDepositFill, PiHandDepositBold as _b, PiHand as _c  } from "react-icons/pi";
+import { FaBan, FaHandHolding as _d } from "react-icons/fa";
 
 function Draft() {
     const { setBeSure, ownedBoxIds } = useSettings();
@@ -16,7 +24,7 @@ function Draft() {
     const [turnIndex, setTurnIndex] = useState<number>(0);
     const [draftActive, setDraftActive] = useState<boolean>(false);
     const [selectedProtocol, setSelectedProtocol] = useState<DraftItem|null>(null);
-    const currentDraft = COMPETITIVE_SNAKE_SEQUENCE;
+    const currentDraft = _RANDOM_DRAFT;
     const isDraftOver = turnIndex >= currentDraft.length;
     const currentStep = currentDraft[turnIndex];
     const protocolModalRef = useRef<ProtocolModalHandle>(null);
@@ -59,7 +67,7 @@ function Draft() {
             )
         );
 
-        if (action === 'PICK' || action === 'GIVE') {
+        if (action === 'PICK' || action === 'GIVE' || action === 'RANDOM') {
             const recivePlayer = action === 'GIVE' ? player === 0 ? 1 : 0 : player;
             setParties((prevParties) => {
                 const newParties = [...prevParties];
@@ -84,10 +92,20 @@ function Draft() {
                                     <div className={'picked-protocols'}>
                                         {Array.from({ length: MAX_DRAFT }).map((_, slotIdx) => {
                                             const item = playerItems[slotIdx];
+                                            const otherPlayer = currentStep?.player === 1 ? 0 : 1;
+                                            const otherPlayerItems = parties[otherPlayer]
                                             const isCurrent =
-                                                slotIdx === playerItems.length &&
-                                                playerIdx === currentStep.player &&
-                                                currentStep.action === 'PICK';
+                                                (
+                                                    slotIdx === playerItems.length &&
+                                                    playerIdx === currentStep.player &&
+                                                    currentStep.action === 'PICK'
+                                                ) ||
+                                                (
+                                                    slotIdx === otherPlayerItems.length &&
+                                                    playerIdx === otherPlayer &&
+                                                    currentStep.action === 'GIVE'
+                                                )
+                                                ;
 
                                             return (
                                                 <BorderBox 
@@ -118,10 +136,11 @@ function Draft() {
                                             (step === currentStep ? ' active' : '')
                                         }
                                     >
-                                        {step.action === 'BAN' && <FontAwesomeIcon icon={faBan} size={'lg'} />}
-                                        {step.action === 'PICK' && <FontAwesomeIcon icon={faMapMarker} size={'lg'} />}
-                                        {step.action === 'GIVE' && <FontAwesomeIcon icon={faHandHolding} size={'lg'} />}
-                                        {step.action === 'OTHER' && <FontAwesomeIcon icon={faOtter} size={'lg'} />}
+                                        {step.action === 'BAN' && <FaBan size={20} />}
+                                        {step.action === 'PICK' && <GiCardPlay size={20}/>}
+                                        {step.action === 'GIVE' && <PiHandDepositFill size={20}/>}
+                                        {step.action === 'RANDOM' && <GiCardRandom size={20}/>}
+                                        {step.action === 'OTHER' && <GiCardExchange size={20}/>}
                                     </span>
                                 )
                             })}
@@ -133,7 +152,7 @@ function Draft() {
                         {pool.map((item) => (
                             <button
                                 key={item.id}
-                                onClick={() => item.status ==='AVAILABLE' && setSelectedProtocol(item)}
+                                onClick={() => item.status === 'AVAILABLE' && currentStep.action !== 'RANDOM' && setSelectedProtocol(item)}
                                 disabled={isDraftOver}
                                 className={
                                     'protocol status-' +
@@ -145,12 +164,30 @@ function Draft() {
                                     backgroundImage: `url(${item.image})`,
                                     backgroundPosition: `${item.x}% ${item.y}%`
                                 }}>
-                                    {/*item.name*/}
                                 </div>
                                 <div className={'protocol-overlay ' + (item.status !== 'AVAILABLE' ? 'striped-overlay' : '')}></div>
                             </button>
                         ))}
                     </div>
+                    {currentStep?.action === 'RANDOM' &&
+                        <div className={'draft-select'}>
+                            <div className={'selected-protocol'}>
+                                <h4>Random Protocol</h4>
+                                <div className={'protocol-info'}>
+                                    <span className={'flavor-text'}>Does what?</span>
+                                    <span className={'info-text'}>And how?</span>
+                                </div>
+                            </div>
+                            <Button onClick={() => {
+                                const rngPool = pool.filter((item) => {
+                                    return item.status === 'AVAILABLE'
+                                });
+                                handleAction(rngPool[Math.floor(Math.random() * rngPool.length)]);
+                            }}>
+                                Confirm {currentStep.action.toLowerCase()}
+                            </Button>
+                        </div>
+                    }
                     {selectedProtocol &&
                         <div className={'draft-select'}>
                             <div className={'extraInfo'}>
