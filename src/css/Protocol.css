@@ -22,24 +22,11 @@
 }
 
 .errata {
+    z-index: 10;
     position: absolute;
-    right: 7%;
-}
-
-.errata svg {
+    right: 1%;
+    bottom: 1%;
     filter: drop-shadow(0 0 6px #000);
-}
-
-
-.errata.top {
-    top: 24%;
-}
-.errata.middle {
-    top: 48%;
-    right: 10%;
-}
-.errata.bottom {
-    top: 74%
 }
 
 .errataTag {
@@ -76,4 +63,51 @@
 }
 .pack-name.cycle-3 {
     background: var(--cycle-3-color);
+}
+
+.carousel-parent {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+
+.carousel-parent::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-item {
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: 100%;
+    scroll-snap-align: start;
+    justify-content: center;
+    align-items: center;
+}
+.errataDrawer .rs-drawer-dialog {
+    background-color: #333333d1 !important;
+}
+.errataDrawer .rs-drawer-header .rs-drawer-title{
+    font-size: 28px;
+    justify-content: center;
+}
+.errataDrawer .rs-drawer-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.errataDrawer .rs-drawer-body > div {
+    width: 100%;
+    flex-grow: 0;
+}
+.flexBottom {
+    padding-top: 10px;
+    margin-top: auto;
+}
+.errataText {
+    font-size: 16px;
+    margin-bottom: 15px;
+    width: 100%;
+    background: #222;
+    padding: 15px;
 }

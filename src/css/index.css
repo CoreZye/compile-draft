@@ -27,6 +27,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --cycle-1-color: #b66bb6;
+  --cycle-2-color: #d6a128;
+  --cycle-3-color: #cf0f01;
+
   @media (max-width: 1024px) {
     font-size: 16px;
   }
@@ -49,10 +53,6 @@
     --social-bg: rgba(47, 48, 58, 0.5);
     --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
     --stripe-color: #00000099;
-    --cycle-1-color: #eb8ce2;
-    --cycle-2-color: #e9a91e;
-    --cycle-3-color: red;
-
   }
 }
 :root body.rs-theme-dark {
