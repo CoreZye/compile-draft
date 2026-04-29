@@ -22,6 +22,7 @@ export interface MenuItem {
     component: React.FC
 }
 
+
 const menu : MenuItem[] = [
     { id: VIEWS.HOME, title: 'Home', icon: FaHome, component: Home },
     { id: VIEWS.STATS, title: 'Stats', icon: FaChartLine, component: Stats },
