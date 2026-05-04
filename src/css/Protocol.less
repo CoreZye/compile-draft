@@ -1,0 +1,147 @@
+.custom-steps {
+    --rs-steps-icon-state-process: var(--accent);
+    padding-bottom: 10px;
+
+    svg {
+        position: relative;
+        z-index: 2;
+    }
+
+    .rs-steps-item-icon:before {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: 4px;
+        left: 4px;
+        right: 4px;
+        bottom: 4px;
+        display: block;
+        background: #000;
+    }
+}
+.cardImage {
+    position: relative;
+}
+
+
+.pack-name { 
+    &.cycle-1 {
+        background: var(--cycle-1-color);
+    }
+    &.cycle-2 {
+        background: var(--cycle-2-color);
+    }
+    &.cycle-3 {
+        background: var(--cycle-3-color);
+    }
+    span {
+        color: #333;
+        font-weight: 700;
+    }
+}
+.protocolModal {
+    .rs-modal-dialog {
+        overflow: hidden;
+        padding-bottom: 25px;;
+    }
+}
+
+.carousel-parent {
+    display: flex;
+    overflow-x: auto;
+    height: calc(100svh - 95px - 145px);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.carousel-item {
+    height: 100%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;    
+
+    .cardImage {
+        height: calc(100% - 55px);
+        width: 100%;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+    }
+}
+
+.tags {
+    width: 100%;
+    margin-top: auto;
+
+    .rs-tag {
+        font-size: 12px;
+    }
+}
+
+.errata {
+    cursor: pointer;
+    z-index: 10;
+    position: absolute;
+    right: 1%;
+    bottom: 1%;
+    filter: drop-shadow(0 0 6px #000);
+}
+
+.errataTag {
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: red;
+
+    span {
+        color: #FFF;
+    }
+}
+
+.errataDrawer {
+    .rs-drawer-dialog {
+        background-color: #333333e3 !important;
+    }
+    .rs-drawer-header .rs-drawer-title{
+        font-size: 28px;
+        justify-content: center;
+    }
+    .rs-drawer-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+
+        &> div {
+            width: 100%;
+            flex-grow: 0;
+        }
+    }
+    .errataText {
+        font-size: 16px;
+        margin-bottom: 15px;
+        width: 100%;
+        background: #222;
+        padding: 15px;
+    }
+}
+
+.headerInfo {
+    height: 95px;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    margin-top: auto;
+    padding-bottom: 10px;;
+}

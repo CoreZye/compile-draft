@@ -1,7 +1,9 @@
-import '@/css/Codex.css'
+import '@/css/Codex.less'
 import { useRef } from 'react';
+import { Text } from 'rsuite';
 import { type DraftItem, INITIAL_POOL, PACKS } from "@/utils/constants";
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
+import tempProtocol from '@/assets/temp-protocol.webp';
 
 function Codex () {
     const protocolModalRef = useRef<ProtocolModalHandle>(null);
@@ -27,10 +29,13 @@ function Codex () {
                             }
                             <div className={'protocol-sprite'}
                                  style={{
-                                     backgroundImage: `url(${protocol.image})`,
-                                     backgroundPosition: `${protocol.x}% ${protocol.y}%`
+                                    backgroundImage: `url(${tempProtocol})`
+                                     /*backgroundImage: `url(${protocol.image})`,
+                                     backgroundPosition: `${protocol.x}% ${protocol.y}%`*/
                                 }}
-                            ></div>
+                            >
+                                <Text>{protocol.name}</Text>
+                            </div>
                         </button>
                     )
                 })}

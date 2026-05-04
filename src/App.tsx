@@ -1,6 +1,6 @@
 import '@/css/App.css'
 import { useState } from 'react';
-import { CustomProvider } from 'rsuite';
+import { CustomProvider, Text } from 'rsuite';
 import { SettingsProvider } from "@/context/SettingsProvider.tsx";
 import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { VIEWS }  from "@/utils/constants.ts";
@@ -14,6 +14,8 @@ import { type IconType } from 'react-icons';
 import { GiCardExchange } from "react-icons/gi";
 import { FaBook, FaHome, FaUser } from "react-icons/fa";
 import { FaChartLine } from "react-icons/fa6";
+import { PWAProvider } from '@/context/PWAContext';
+import useWindowSize from '@/hooks/useWindowSize';
 
 export interface MenuItem {
     id: string;
@@ -21,7 +23,6 @@ export interface MenuItem {
     icon: IconType;
     component: React.FC
 }
-
 
 const menu : MenuItem[] = [
     { id: VIEWS.HOME, title: 'Home', icon: FaHome, component: Home },
@@ -33,6 +34,7 @@ const menu : MenuItem[] = [
 const lsActiveComp = 'activeComponent';
 
 function App() {
+    const { width, height } = useWindowSize();
     const [activeView, setActiveView] = useState(() => {
         const saved = localStorage.getItem(lsActiveComp);
         const isValid = menu.some(item => item.id === saved);
@@ -59,12 +61,22 @@ function App() {
     return (
         <div id={'main'}>
             <CustomProvider theme={'dark'}>
-                <SettingsProvider>
-                    <div className='app' id='app'>
-                        <ActivePage />
-                    </div>
-                    <Toolbar menu={menu} activeView={activeView} onViewChange={updateActiveComponent}/>
-                </SettingsProvider>
+                <PWAProvider>
+                    <SettingsProvider>
+                        <div className='app' id='app'>
+                            {width < 300 || height < 500 ?
+                                <div className='applicationSizeError'>
+                                    Screen too small for the application to function properly
+                                    <Text muted>Try in another orientation</Text>
+                                </div>
+                                
+                            :
+                                <ActivePage />       
+                            }
+                        </div>
+                        <Toolbar menu={menu} activeView={activeView} onViewChange={updateActiveComponent}/> 
+                    </SettingsProvider>
+                </PWAProvider>
             </CustomProvider>
         </div>
     )

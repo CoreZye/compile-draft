@@ -1,4 +1,4 @@
-import '@/css/Toolbar.css';
+import '@/css/Toolbar.less';
 import { Badge, Avatar, Modal, ButtonGroup, Button, Text } from 'rsuite';
 import { useState } from 'react';
 import { VIEWS } from "@/utils/constants.ts";

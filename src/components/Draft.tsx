@@ -1,6 +1,6 @@
-import '@/css/Draft.css'
-import { useRef, useState } from 'react';
-import {Button, Divider, Toggle, HStack, Text, Heading, SelectPicker, Box, Input } from 'rsuite';
+import '@/css/Draft.less'
+import { useEffect, useRef, useState } from 'react';
+import {Button, Divider, Toggle, HStack, Text, Heading, SelectPicker, Box, Input, Whisper, Popover } from 'rsuite';
 import { TbCardsFilled } from "react-icons/tb";
 import { 
     type DraftItem,
@@ -8,16 +8,21 @@ import {
     COMPETITIVE_SNAKE_DRAFT,
     RANDOM_DRAFT,
     INITIAL_POOL, 
+    REVERSE_SNAKE_DRAFT,
     PACKS, 
-    MAX_DRAFT
-} from '@/utils/constants.ts'
+    MAX_DRAFT,
+    type DraftItemStatus,
+    type DraftInformation
+} from '@/utils/constants.ts';
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 import BorderBox from '@/components//minor/BorderBox.tsx';
 import { useSettings } from "@/context/SettingContext.ts";
-import { GiCardPlay, GiCardRandom, GiCardExchange } from "react-icons/gi";
+import { GiCardPlay, GiCardRandom, GiCardExchange, GiCardDraw } from "react-icons/gi";
 import { PiHandDepositFill } from "react-icons/pi";
 import { FaBan } from "react-icons/fa";
 import {Close, Check} from '@rsuite/icons';
+import tempProtocol from '@/assets/temp-protocol.webp';
+import { shuffle } from '@/utils/arraySort';
 
 function Draft() {
     const { setBeSure, ownedBoxIds, name, lastPlayerOneName, lastPlayerTwoName, setPlayerNames } = useSettings();
@@ -79,7 +84,7 @@ function Draft() {
         );
 
         if (action === 'PICK' || action === 'GIVE' || action === 'RANDOM') {
-            const recivePlayer = action === 'GIVE' ? player === 0 ? 1 : 0 : player;
+            const recivePlayer = (action === 'GIVE' ? player === 1 ? 2 : 1 : player) -1; 
             setParties((prevParties) => {
                 const newParties = [...prevParties];
                 newParties[recivePlayer] = [...newParties[recivePlayer], { ...selectedItem, status: action }];
@@ -91,13 +96,19 @@ function Draft() {
     };
 
     const players: Record<number, string> = {
-        0: opponentStart ? playerTwo : playerOne,
-        1: !opponentStart ? playerTwo : playerOne,
+        1: opponentStart ? playerTwo : playerOne,
+        2: !opponentStart ? playerTwo : playerOne,
     }
-    const draftPool = [
-        { group: 'Default', label: 'Normal Draft', value: SNAKE_DRAFT },
+
+    const draftPool: DraftInformation[] = [
+        { group: 'Default', label: 'Normal Draft', value: SNAKE_DRAFT, info: 
+            '<div>A normal snake draft where each player ends up with 3 protocols</div>'+
+            '<div>The game randoms picks 12 of the owned protocols</div>'+
+            'Player 1 gets first pick, then player 2 gets 2 picks and so on until both have 3' 
+        },
         { group: 'Default', label: 'Competitive Draft', value: COMPETITIVE_SNAKE_DRAFT },
         { group: 'Default', label: 'Random Draft', value: RANDOM_DRAFT },
+        { group: 'Default', label: 'Hate Draft', value: REVERSE_SNAKE_DRAFT },
         { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
         { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
         { group: 'Official', label: 'Random Draft', value: RANDOM_DRAFT },
@@ -106,30 +117,62 @@ function Draft() {
         { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
         { group: 'Submitted', label: 'Random Draft', value: RANDOM_DRAFT },
     ]
+
+    const currentDraftInfo = draftPool.find((item) => {
+        return item.value === currentDraft
+    } )
+
+    const ACTION_ICONS: Record<string, React.ReactNode> = {
+        BAN: <FaBan size={20} />,
+        PICK: <GiCardPlay size={20} />,
+        GIVE: <PiHandDepositFill size={20} />,
+        RANDOM: <GiCardRandom size={20} />,
+        OTHER: <GiCardExchange size={20} />,
+        DRAW: <GiCardDraw size={20} />,
+        DISPLAY: <GiCardDraw size={20} />,
+    };
+
+    useEffect(() => {
+        if (draftActive && currentStep && currentStep.player === 0) {
+            if (currentStep.action === 'DISPLAY') {
+                setPool((prevPool) => {
+                    const needCount = currentStep.count ?? pool.length;
+                    const shuffled = shuffle([...prevPool]);
+                    const selected = shuffled.slice(0, needCount);
+                    const remaining = shuffled.slice(needCount);
+                    const hidden = remaining.map(item => ({ ...item, status: 'HIDDEN' as DraftItemStatus }));
+                    return [...selected, ...hidden];
+                });
+            }
+            setTurnIndex((prev) => prev + 1);
+        }
+    } ,[currentStep, draftActive]);
+
     return (
         <>
             {draftActive ?
                 <>
                     <div className={'draft-header'}>
-                        {parties.map((playerItems, playerIdx) => {
-                            const playerName = players[playerIdx]
+                        {parties.map((playerItems, plIdx) => {
+                            const playerNum = plIdx + 1;
+                            const playerName = players[playerNum]
                             return (
-                                <section key={playerIdx} className={"protocol-draft" + (' player-'+playerIdx)}>
+                                <section key={playerNum} className={"protocol-draft" + (' player-'+playerNum)}>
                                     <h4 className={'player-name'}>{playerName}</h4>
                                     <div className={'picked-protocols'}>
                                         {Array.from({ length: MAX_DRAFT }).map((_, slotIdx) => {
                                             const item = playerItems[slotIdx];
-                                            const otherPlayer = currentStep?.player === 1 ? 0 : 1;
-                                            const otherPlayerItems = parties[otherPlayer]
+                                            const otherPlayer = currentStep?.player === 1 ? 2 : 1;
+                                            const otherPlayerItems = parties[otherPlayer-1]
                                             const isCurrent =
                                                 (
                                                     slotIdx === playerItems.length &&
-                                                    playerIdx === currentStep.player &&
+                                                    playerNum === currentStep.player &&
                                                     currentStep.action === 'PICK'
                                                 ) ||
                                                 (
                                                     slotIdx === otherPlayerItems.length &&
-                                                    playerIdx === otherPlayer &&
+                                                    playerNum === otherPlayer &&
                                                     currentStep.action === 'GIVE'
                                                 )
                                                 ;
@@ -163,11 +206,7 @@ function Draft() {
                                             (step === currentStep ? ' active' : '')
                                         }
                                     >
-                                        {step.action === 'BAN' && <FaBan size={20} />}
-                                        {step.action === 'PICK' && <GiCardPlay size={20}/>}
-                                        {step.action === 'GIVE' && <PiHandDepositFill size={20}/>}
-                                        {step.action === 'RANDOM' && <GiCardRandom size={20}/>}
-                                        {step.action === 'OTHER' && <GiCardExchange size={20}/>}
+                                        {ACTION_ICONS[step.action] || null}
                                     </span>
                                 )
                             })}
@@ -176,7 +215,9 @@ function Draft() {
                     </div>
 
                     <div className={'draft-pool collapsible' + (isDraftOver ? ' closed' : '')}>
-                        {pool.map((item) => (
+                        {pool.filter((item) => (
+                            item.status !== 'HIDDEN'
+                        )).map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => item.status === 'AVAILABLE' && currentStep.action !== 'RANDOM' && setSelectedProtocol(item)}
@@ -188,9 +229,10 @@ function Draft() {
                                 }
                             >
                                 <div className={'protocol-sprite'} style={{
-                                    backgroundImage: `url(${item.image})`,
-                                    backgroundPosition: `${item.x}% ${item.y}%`
+                                    backgroundImage: `url(${tempProtocol})`,
+                                    /*backgroundPosition: `${item.x}% ${item.y}%`*/
                                 }}>
+                                    <Text>{item.name}</Text>    
                                 </div>
                                 <div className={'protocol-overlay ' + (item.status !== 'AVAILABLE' ? 'striped-overlay' : '')}></div>
                             </button>
@@ -256,9 +298,9 @@ function Draft() {
                             />
                             <Divider spacing={20}/>
                             <HStack spacing={10} className={'double-sided-toggle'}>
-                                <Input className={'line-input player-1 ' + (!random ? (opponentStart ? '': 'start') : '')} value={playerOne} onChange={setPlayerOne}/>
+                                <Input className={'line-input ' + (!random ? (opponentStart ? 'player-2': 'player-1') : '')} value={playerOne} onChange={setPlayerOne}/>
                                 <Toggle disabled={random} checked={opponentStart} onChange={setOpponentStart} className={'dst'} size={'xl'}/>
-                                <Input className={'line-input player-2 ' + (!random ? (opponentStart ? 'start': '') : '')} value={playerTwo} onChange={setPlayerTwo} style={{textAlign: 'right'}} />
+                                <Input className={'line-input ' + (!random ? (opponentStart ? 'player-1': 'player-2') : '')} value={playerTwo} onChange={setPlayerTwo} style={{textAlign: 'right'}} />
                             </HStack>
                             <Divider spacing={20}/>
                             <SelectPicker
@@ -270,6 +312,36 @@ function Draft() {
                                 groupBy={'group'}
                                 block
                             />
+                            { currentDraftInfo && 
+                                <>
+                                    <Divider spacing={10} style={{borderColor: 'transparent'}}/>
+                                    <div className={'draft-info'} style={{width: '100%'}}>
+                                        <div style={{textAlign: 'center', marginBottom: 20}} className={'draft-desc'}>
+                                            <div dangerouslySetInnerHTML={{ __html: currentDraftInfo.info ?? 'No description' }} />
+                                        </div>
+                                         <div className={'draft-steps'}>
+                                            {currentDraft.map((step, idx) => {
+                                                if (step.player === 0) return null;
+                                                return (
+                                                    <Whisper
+                                                        placement="top"
+                                                        trigger="click"
+                                                        speaker={
+                                                            <Popover>
+                                                                <>Player {step.player} {step.action.toLocaleLowerCase()}</>
+                                                            </Popover>
+                                                        }
+                                                    >
+                                                        <span key={idx} className={'step' + (' player-' + step.player)}>
+                                                            <>{ACTION_ICONS[step.action] || null}</>
+                                                        </span>
+                                                    </Whisper>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                </>
+                            }
                             <Divider spacing={20}/>
                             <Toggle width={200}
                                     labelPlacement={'start'}
@@ -303,12 +375,6 @@ function Draft() {
 export default Draft;
 
 /*
-
-                                    Pick Start player vs Random
-                                    Pick Draft type
-                                    Use Names or not?
-                                    Share screen or join by Code
-
 Avoid "Look-alike" Characters
 To make it user-friendly (so people don't ask "Is that an 'O' or a '0'?"), 
 use a reduced alphabet. Remove 0, O, 1, I, L, and S/5.If you use a 30-character set ($A-Z$ minus confusing 

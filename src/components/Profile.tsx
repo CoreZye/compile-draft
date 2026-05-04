@@ -4,8 +4,7 @@ import { Divider, Button, Text, Avatar, Card, HStack, VStack, Stack, RadioTile, 
 import { useSettings } from "@/context/SettingContext.ts";
 import { PACKS } from '@/utils/constants';
 import { LuCodesandbox, LuBandage  } from "react-icons/lu";
-
-
+import { InstallButton } from './InstallButton';
 
 function Profile () {
     const { isLoggedIn, login, logout, name, image, email, setOwnedBoxIds, ownedBoxIds } = useSettings();
@@ -73,6 +72,8 @@ function Profile () {
                     </Card>
                 }
             </div>
+            <Divider/>
+            <InstallButton/>
             <Divider>
                 Owned packs
             </Divider>

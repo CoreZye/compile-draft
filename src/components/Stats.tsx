@@ -1,4 +1,4 @@
-import '@/css/Stats.css';
+import '@/css/Stats.less';
 import React, { useEffect } from 'react';
 import { Table, type SortType, Nav, Panel } from 'rsuite';
 import { INITIAL_POOL } from '@/utils/constants';
