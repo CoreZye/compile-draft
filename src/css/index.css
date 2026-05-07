@@ -31,6 +31,8 @@
   --cycle-2-color: #d6a128;
   --cycle-3-color: #cf0f01;
 
+  --rs-navs-selected: var(--accent);
+
   @media (max-width: 1024px) {
     font-size: 16px;
   }

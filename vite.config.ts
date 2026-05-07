@@ -46,12 +46,12 @@ export default defineConfig({
     allowedHosts: true // This tells Vite to trust the localtunnel URL
   },
   server: {
-    host: '0.0.0.0', // This is the magic line
+    //host: '0.0.0.0', // This is the magic line
     port: 5173,
-    strictPort: true,
-     allowedHosts: [
-      'wicked-papers-design.loca.lt'
-    ],
+    //strictPort: true,
+     //allowedHosts: [
+      //'wicked-papers-design.loca.lt'
+    //],
     proxy: {
       '/api': {
         target: 'http://localhost:4001',

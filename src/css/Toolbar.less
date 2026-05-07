@@ -5,6 +5,10 @@
     flex-shrink: 0;
     display: flex;
 
+    &.hasSubNav {
+        margin-top: 0;
+    }
+
     .toolbar-item {
         cursor: pointer;
         flex: 1;
@@ -34,5 +38,9 @@
             }
         }
     }
-    
+}
+
+.sub-nav {
+    --rs-navs-selected: var(--accent);
+    margin-top: 10px;
 }

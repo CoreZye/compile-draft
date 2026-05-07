@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Button } from "rsuite";
-import { db } from '@/utils/firebase';
+import { db } from '@/utils/firebase.ts';
 import {
     collection,
     onSnapshot,
     query,
     limit,
     orderBy,
+    // doc,
+    // setDoc,
     Timestamp,
     type DocumentData,
     QuerySnapshot
 } from "firebase/firestore";
+// import { INITIAL_POOL, CARDS } from "@/utils/constants.ts";
 
 
 interface DraftItem {
@@ -57,27 +60,28 @@ function Settings() {
     }, []);
 
     const handleSave = async () => {
-        const draftData = {
-            name: "Backend-Verified Draft",
-            content: [
-                { id: "i1", order: 1, name: "Faction X" },
-                { id: "i2", order: 2, name: "Faction Y" }
-            ]
-        };
-
-        try {
-            const response = await fetch('http://localhost:4001/api/drafts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(draftData)
-            });
-
-            if (!response.ok) throw new Error('Failed to save via backend');
-
-            console.log("Draft sent to backend successfully!");
-        } catch (err) {
-            console.error(err);
-        }
+    //     try {
+    //         for (const item of INITIAL_POOL) {
+    //             const docRef = await setDoc(doc(db, 'Protocols', item.name.toLowerCase()), {
+    //                 id: item.id,
+    //                 name: item.name,
+    //                 info: item.info,
+    //                 flavor: item.flavor,
+    //                 cards: CARDS.filter((card) => (card.protocol === item.id)).map(card => {
+    //                     return {
+    //                         value: card.value,
+    //                         tags: card.tags,
+    //                         errata: card.errata ?? []
+    //                     }
+    //                 })
+    //             });
+    //             console.log("Document written with ID: ", docRef);
+    //         }
+    //
+    //         console.log("All data uploaded successfully!");
+    //     } catch (e) {
+    //         console.error("Error adding document: ", e);
+    //     }
     };
 
     if (loading) return <p>Syncing with database...</p>;

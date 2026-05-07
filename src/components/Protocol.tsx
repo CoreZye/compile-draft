@@ -14,7 +14,7 @@ import {
     Drawer
 } from 'rsuite';
 import { Close } from "@rsuite/icons";
-import { iconMap, CARDS, type DraftItem, PACKS } from '@/utils/constants.ts';
+import { iconMap, type Protocol, type Pack} from '@/utils/constants.ts';
 import tempCard from '@/assets/temp-card.webp';
 const rawImages = import.meta.glob('@/assets/cards/*.webp', {
     eager: true,
@@ -30,7 +30,7 @@ const cardImages: Record<string, string> = Object.entries(rawImages).reduce(
 );
 
 export interface ProtocolModalHandle {
-    open: (protocol: DraftItem) => void;
+    open: (protocol: Protocol, pack?: Pack | undefined) => void;
 }
 
 type ProtocolModalProps = object;
@@ -38,15 +38,17 @@ type ProtocolModalProps = object;
 const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_props, ref) => {
     const elementMargin = 20;
     const [open, setOpen] = useState(false);
-    const [protocol, setProtocol] = useState<DraftItem | null>(null);
+    const [protocol, setProtocol] = useState<Protocol | null>(null);
+    const [pack, setPack] = useState<Pack | null>(null);
     const [currentStep, setCurrentStep] = useState<number>(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const [activeDrawerId, setActiveDrawerId] = useState<string | null>(null);
     const closeDrawer = () => setActiveDrawerId(null);
 
     useImperativeHandle(ref, () => ({
-        open: (data) => {
+        open: (data, pack) => {
             setProtocol(data);
+            setPack(pack ?? null)
             setOpen(true);
             setCurrentStep(0);
         }
@@ -55,7 +57,6 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const element = e.currentTarget;
         const index = Math.round(element.scrollLeft / (element.offsetWidth+(elementMargin*2)));
-        console.log(index);
 
         if (index !== currentStep) {
             setCurrentStep(index);
@@ -77,14 +78,6 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
 
     if (!protocol) return null;
 
-    const pack = PACKS.find((pack) =>  (
-        pack.contains.includes(protocol.id)
-    ))
-
-    const cards = CARDS.filter((card) => (
-        card.protocol === protocol.id
-    ))
-
     return (
         <Modal className={'protocolModal'} open={open} onClose={() => setOpen(false)} size="full" backdrop={'static'}>
             {pack && <div className={'protocol-banner card-view ' + ('cycle-' + pack.cycle)}>{pack.name}</div>}
@@ -98,14 +91,13 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
                     </div>
                     
                     <div className={'carousel-parent'} ref={containerRef} onScroll={handleScroll} >
-                        {cards.map((card, idx) => {
+                        {protocol.cards.map((card, idx) => {
                             const cardName = protocol.name + ' ' + card.value;
                             const cardCodename = protocol.name.toLowerCase() + '-' + card.value;
                             const cardImage = cardImages[cardCodename] ?? tempCard;
                             return (
                                 <div key={idx} className={'carousel-item'} style={{margin: `0 ${elementMargin}px`,}} >
-                                    <div className={'cardImage'} style={{backgroundImage: `url(${cardImage})`,}} 
-                                    ></div>
+                                    <div className={'cardImage'} style={{backgroundImage: `url(${cardImage})`,}} ></div>
 
                                     <div className={'tags'}>
                                         <Divider />                                        
@@ -170,7 +162,7 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
             </Modal.Body>
             <Modal.Footer className={'footer'} >
                 <Steps current={currentStep} small className={'custom-steps'}>
-                    {cards.map((card, idx) => {
+                    {protocol.cards.map((card, idx) => {
                         const Icon = iconMap[card.value];
                         return (
                             <Steps.Item
