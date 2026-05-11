@@ -19,19 +19,6 @@
     padding-bottom: 0;
 }
 
-.rs-anim-collapse, 
-.rs-anim-collapsing,
-.rs-anim-in,
-.rs-panel-group .rs-panel-body-collapse {
-    transition: none !important;
-    animation: none !important;
-}
-
-/* Force the panel to stop "sliding" and just be there */
-.collapse.in {
-    transition: none !important;
-}
-
 #codex .pool{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -55,9 +42,6 @@
 .protocol-sprite {
     width: 100%;
     height: 100%;
-    /*aspect-ratio: 430 / 308;
-    background-size: 513% 445%;
-    background-position: 5% 11.4%;*/
     background-repeat: no-repeat;
     background-size: cover;
 
@@ -115,7 +99,7 @@
         right: -45px;
     }
 }
-.rs-badge {
+.rs-divider .rs-badge {
     color: #000;
     margin-left: 5px;
     background-color: var(--accent);
@@ -143,5 +127,42 @@
         svg {
             color: var(--accent);
         }
+    }
+    .rs-picker-toggle-indicator {
+        min-width: 16px;
+    }
+}
+
+.rs-picker-check-menu,
+.rs-picker-popup {
+    .rs-picker-list-item {
+        margin-left: 25px;
+    }
+}
+
+.affix {
+    position: sticky;
+    top: -1px;
+    background: var(--bg);
+    margin-top: -10px;
+    padding: 0 0 1px;
+
+    .filterAccord {
+        .rs-panel-header {
+            button {
+                padding: 0;
+            }
+        }
+    }
+}
+.filteredContent {
+    margin-top: 10px;
+    
+    .rs-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-items: center;
+        height: 100%;
     }
 }

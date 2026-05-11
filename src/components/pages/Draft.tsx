@@ -43,6 +43,7 @@ function Draft({ activeSub }: PageProps) {
     const [onlineDraft, setOnlineDraft] = useState(false);
     const [playerOne, setPlayerOne] = useState(lastPlayerOneName ?? name ?? 'Me')
     const [playerTwo, setPlayerTwo] = useState(lastPlayerTwoName ?? 'Opponent')
+    const [code, setCode] = useState('');
     const hideUnavailable = true;
     const handleOpen = (item: Protocol) => {
         protocolModalRef.current?.open(item);
@@ -381,9 +382,21 @@ function Draft({ activeSub }: PageProps) {
             {activeSub === VIEWS.DRAFT_JOIN &&
                 <div className={'code-box'}>
                     <Text>Join draft with Code:</Text>
-                    <PinInput className={'code-input'} otp size={'lg'} length={5} type={'alphanumeric'} onComplete={(code) => {
-                        console.log(code.toUpperCase());
-                    }}/>
+                    <PinInput 
+                        className={'code-input'} 
+                        otp 
+                        size={'lg'} 
+                        length={5} 
+                        type={'alphanumeric'} 
+                        value={code}
+                        onChange={(val) => setCode(val)}
+                        onComplete={(val) => {
+                            console.log(val, code);
+                            if (code.length === 5) {
+                                alert(code.toUpperCase());
+                            }
+                        }}
+                    />
                 </div>
             }
 

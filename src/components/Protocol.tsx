@@ -30,7 +30,7 @@ const cardImages: Record<string, string> = Object.entries(rawImages).reduce(
 );
 
 export interface ProtocolModalHandle {
-    open: (protocol: Protocol, pack?: Pack | undefined) => void;
+    open: (protocol: Protocol, pack?: Pack | undefined, idx?: number) => void;
 }
 
 type ProtocolModalProps = object;
@@ -46,13 +46,28 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
     const closeDrawer = () => setActiveDrawerId(null);
 
     useImperativeHandle(ref, () => ({
-        open: (data, pack) => {
+        open: (data, pack, idx = 0) => {
             setProtocol(data);
             setPack(pack ?? null)
             setOpen(true);
-            setCurrentStep(0);
+            setCurrentStep(idx);
+            setTimeout(() =>{
+                scrollTo(idx, 'instant');
+            }, 200);
         }
     }));
+
+    const scrollTo = (idx: number, scroll: ScrollBehavior = 'smooth') => {
+        const container = containerRef.current;
+        if (container) {
+            const slideWidth = container.offsetWidth + elementMargin*2;
+            const targetScroll = idx * slideWidth;
+            container.scrollTo({
+                left: targetScroll,
+                behavior: scroll
+            });
+        }
+    }
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const element = e.currentTarget;
@@ -65,15 +80,7 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
 
     const handleClick = (step: number) => {
         setCurrentStep(step);
-        const container = containerRef.current;
-        if (container) {
-            const slideWidth = container.offsetWidth + elementMargin*2;
-            const targetScroll = step * slideWidth;
-            container.scrollTo({
-                left: targetScroll,
-                behavior: 'smooth'
-            });
-        }
+        scrollTo(step)
     }
 
     if (!protocol) return null;
@@ -97,63 +104,69 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
                             const cardImage = cardImages[cardCodename] ?? tempCard;
                             return (
                                 <div key={idx} className={'carousel-item'} style={{margin: `0 ${elementMargin}px`,}} >
-                                    <div className={'cardImage'} style={{backgroundImage: `url(${cardImage})`,}} ></div>
-
-                                    <div className={'tags'}>
-                                        <Divider />                                        
-                                        <HStack justify={'center'} >
-                                            <TagGroup justify={'center'}>
-                                                {card.tags.map((tag, idx) => (
-                                                    <Tag key={idx} size="sm">{tag}</Tag>
-                                                ))}
-                                                {card.errata && Object.entries(card.errata).length > 0 &&
-                                                    <Tag size="sm" className={'errataTag'} onClick={() => {
-                                                        setActiveDrawerId(cardCodename);
-                                                    }}>Errata*</Tag>
-                                                }
-                                            </TagGroup>
-                                        </HStack>
-                                        <Divider />
-                                    </div>
-
-                                    <Drawer
-                                        className={'errataDrawer'}
-                                        backdrop={false}
-                                        key={`drawer-${cardCodename}`}
-                                        open={activeDrawerId === cardCodename}
-                                        onClose={closeDrawer}
-                                        onClick={closeDrawer}
-                                        closeButton={false}
-                                        size="md"
-                                    >
-                                        <Drawer.Header>
-                                            <Drawer.Title>
-                                                {cardName}
-                                            </Drawer.Title>
-                                        </Drawer.Header>
-                                        <Drawer.Body>
-                                            <div style={{overflowY: 'scroll'}}>
-                                                <Divider/>
-                                                {card.errata && card.errata.map((text) => {
-                                                    if (!text) return null;
-                                                    return (
-                                                        <div className={'errataText'}>
-                                                            {text}
-                                                        </div>
-                                                    );
-                                                })}
+                                    {Math.abs(idx - currentStep) <= 2 ?
+                                        <>
+                                            <div className={'cardImage'} style={{backgroundImage: `url(${cardImage})`,}} ></div>
+                                    
+                                            <div className={'tags'}>
+                                                <Divider />                                        
+                                                <HStack justify={'center'} >
+                                                    <TagGroup justify={'center'}>
+                                                        {card.tags.map((tag, idx) => (
+                                                            <Tag key={idx} size="sm">{tag}</Tag>
+                                                        ))}
+                                                        {card.errata && Object.entries(card.errata).length > 0 &&
+                                                            <Tag size="sm" className={'errataTag'} onClick={() => {
+                                                                setActiveDrawerId(cardCodename);
+                                                            }}>Errata*</Tag>
+                                                        }
+                                                    </TagGroup>
+                                                </HStack>
+                                                <Divider />
                                             </div>
-                                            <div className={'footer'}>
-                                                <Drawer.Actions style={{width: '100%'}}>
-                                                    <ButtonGroup justified>
-                                                        <IconButton className={'closeBtn'} placement={'right'} onClick={closeDrawer} icon={<Close />} size="md">
-                                                            Close Errata
-                                                        </IconButton>
-                                                    </ButtonGroup>
-                                                </Drawer.Actions>
-                                            </div>
-                                        </Drawer.Body>
-                                    </Drawer>
+
+                                            <Drawer
+                                                className={'errataDrawer'}
+                                                backdrop={false}
+                                                key={`drawer-${cardCodename}`}
+                                                open={activeDrawerId === cardCodename}
+                                                onClose={closeDrawer}
+                                                onClick={closeDrawer}
+                                                closeButton={false}
+                                                size="md"
+                                            >
+                                                <Drawer.Header>
+                                                    <Drawer.Title>
+                                                        {cardName}
+                                                    </Drawer.Title>
+                                                </Drawer.Header>
+                                                <Drawer.Body>
+                                                    <div style={{overflowY: 'scroll'}}>
+                                                        <Divider/>
+                                                        {card.errata && card.errata.map((text, idx) => {
+                                                            if (!text) return null;
+                                                            return (
+                                                                <div key={cardCodename + idx} className={'errataText'}>
+                                                                    {text}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <div className={'footer'}>
+                                                        <Drawer.Actions style={{width: '100%'}}>
+                                                            <ButtonGroup justified>
+                                                                <IconButton className={'closeBtn'} placement={'right'} onClick={closeDrawer} icon={<Close />} size="md">
+                                                                    Close Errata
+                                                                </IconButton>
+                                                            </ButtonGroup>
+                                                        </Drawer.Actions>
+                                                    </div>
+                                                </Drawer.Body>
+                                            </Drawer>
+                                        </>
+                                    : 
+                                        <div className={'cardImage'} ></div>
+                                    }
                                 </div>
                             )
                         })}
@@ -161,19 +174,21 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
                 </div>
             </Modal.Body>
             <Modal.Footer className={'footer'} >
-                <Steps current={currentStep} small className={'custom-steps'}>
-                    {protocol.cards.map((card, idx) => {
-                        const Icon = iconMap[card.value];
-                        return (
-                            <Steps.Item
-                                key={idx}
-                                icon={<Icon size={26} />}
-                                status={currentStep === idx ? 'process' : 'wait'}
-                                onClick={() => handleClick(idx)}
-                            />
-                        );
-                    })}
-                </Steps>
+                {protocol.id > 0 &&
+                    <Steps current={currentStep} small className={'custom-steps'}>
+                        {protocol.cards.map((card, idx) => {
+                            const Icon = iconMap[card.value];
+                            return (
+                                <Steps.Item
+                                    key={idx}
+                                    icon={<Icon size={26} />}
+                                    status={currentStep === idx ? 'process' : 'wait'}
+                                    onClick={() => handleClick(idx)}
+                                />
+                            );
+                        })}
+                    </Steps>
+                }
                 <ButtonGroup justified>
                     <IconButton className={'closeBtn'} placement={'right'} onClick={() => setOpen(false)} icon={<Close />} size="md" >Close</IconButton>
                 </ButtonGroup>

@@ -51,6 +51,7 @@
     overflow-x: auto;
     height: calc(100svh - 95px - 145px);
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -64,6 +65,7 @@
     flex-shrink: 0;
     width: 100%;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     display: flex;
     flex-direction: column;    
 

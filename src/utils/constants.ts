@@ -18,6 +18,7 @@ export type DraftAction = 'PICK' | 'BAN' | 'GIVE' | 'RANDOM' | 'OTHER' | 'DRAW' 
 export type DraftItemStatus = DraftAction | 'AVAILABLE' | 'UNAVAILABLE' | 'HIDDEN';
 
 export const TAG_OPTIONS = [
+    '__errata__',
     'Delete', 'Discard', 'Draw', 'Flip', 'Give', 'Play',
     'Rearrange', 'Return', 'Reveal', 'Refresh', 'Shift',
     'Swap', 'Take', 'Compile', 'Control', 'Prevent'
@@ -132,8 +133,8 @@ export const VIEWS = {
     DRAFT_START: 'draft-start',
     DRAFT_JOIN: 'draft-join',
     CODEX: 'codex',
-    CODEX_OVERVIEW: 'codex-overview',
-    CODEX_TAGS: 'codex-tags',
+    CODEX_PROTOCOLS: 'codex-protocols',
+    CODEX_CARDS: 'codex-cardss',
     PROFILE: 'profile'
 
 };

@@ -1,0 +1,69 @@
+#home {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 100%;
+
+    .compileImage {
+        flex-grow: 0;
+        img {
+            margin-bottom: 20px;
+            filter: opacity(40%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 33%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 33%, rgba(0,0,0,0) 100%);
+
+            --fade-size: 5%; /* How far in the fade goes */
+
+            -webkit-mask-image: 
+                linear-gradient(to bottom, transparent, black var(--fade-size), black calc(100% - 33%), transparent),
+                linear-gradient(to right, transparent, black var(--fade-size), black calc(100% - var(--fade-size)), transparent);
+            
+            -webkit-mask-composite: source-in; 
+            mask-composite: intersect;
+        }
+        .design {
+            margin-top: -30px;
+            display: flex;
+            justify-content: end;
+            gap: 5px;
+
+            .tagline {
+                font-style: italic;
+                color:  #ccc;
+            }
+            .author {
+                color: var(--accent);
+            }
+        }
+
+        .rs-divider {
+            margin-top: 10px;
+        }
+    }
+    .frontContent {
+        width: 100%;
+        flex-grow: 1;
+        height: 0;
+
+        .rs-text {
+            margin-bottom: 15px;;
+        }
+
+        .rs-panel-btn {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .rs-panel-body-collapse {
+            height: 100%;
+            overflow: scroll;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 100%);
+        }
+    }
+
+    .rules-info {
+        align-self: end;
+        width: 100%;
+    }
+}

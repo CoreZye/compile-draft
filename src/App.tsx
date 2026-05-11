@@ -1,4 +1,4 @@
-import '@/css/App.css'
+import '@/css/App.less'
 import { useState } from 'react';
 import { CustomProvider, Text } from 'rsuite';
 import { SettingsProvider } from "@/context/SettingsProvider.tsx";
@@ -18,6 +18,7 @@ import { PWAProvider } from '@/context/PWAContext';
 import useWindowSize from '@/hooks/useWindowSize';
 import { DataProvider } from '@/context/DataProvider';
 import { type PageProps} from "@/utils/types.ts";
+import TermsOfService from './components/minor/Terms';
 
 export interface MenuItem {
     id: string;
@@ -45,8 +46,8 @@ const menu : MenuItem[] = [
         ]
     },
     { id: VIEWS.CODEX, title: 'Codex', icon: FaBook, component: Codex, sub: [
-            {id: VIEWS.CODEX_OVERVIEW, title: 'All Protocols', },
-            {id: VIEWS.CODEX_TAGS, title: 'Filtered', }
+            {id: VIEWS.CODEX_PROTOCOLS, title: 'By Protocol', },
+            {id: VIEWS.CODEX_CARDS, title: 'By Card', }
         ]
     },
     { id: VIEWS.PROFILE, title: 'Profile', icon: FaUser, component: Profile },
@@ -89,6 +90,7 @@ function App() {
                 <PWAProvider>
                     <SettingsProvider>
                         <DataProvider>
+                            <TermsOfService/>
                             <div className='app' id='app'>
                                 {width < 300 || height < 500 ?
                                     <div className='applicationSizeError'>

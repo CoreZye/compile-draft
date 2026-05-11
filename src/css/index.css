@@ -82,3 +82,13 @@
   max-width: 100vh;
   */
 }
+
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar {
+  display: none;
+}

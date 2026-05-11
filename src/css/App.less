@@ -61,3 +61,42 @@
     background-color: var(--accent-darker) !important;
     color: #000;
 }
+
+.full-height-accordion {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: none !important;
+
+    .rs-panel-btn {
+        svg {
+            display: none;
+        }
+    }
+
+    .rs-panel-title {
+        text-align: center;
+    }
+
+    .rs-panel {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+    .rs-panel-in {
+        flex: 1;
+        overflow: hidden;
+
+        .rs-panel-title {
+            color: var(--accent);
+            border-bottom: 1px solid var(--accent);
+        }
+    }
+    .rs-panel-body {
+        overflow: hidden;
+    }
+
+    * {
+        transition: none !important;
+    }
+}
