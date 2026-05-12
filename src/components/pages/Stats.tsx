@@ -1,6 +1,7 @@
 import '@/css/Stats.less';
 import React from 'react';
 import { Table, type SortType, Panel } from 'rsuite';
+import {DraftCreator} from "@/components/minor/TempGenerateDraft.tsx";
 
 const { Column, HeaderCell, Cell } = Table;
 
@@ -45,6 +46,7 @@ function Stats () {
 
     return (
         <>
+            <DraftCreator/>
             <main className="my-content-area">
                 {activeKey === 'general' && (
                     <Panel header="General Statistics" bodyFill>
