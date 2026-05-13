@@ -7,6 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# PWA / Service Worker dev files
+dev-dist
+
 node_modules
 dist
 dist-ssr
