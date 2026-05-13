@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors'; // 1. Import cors
 import admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import serviceAccount from "../serviceAccountKey.json" with { type: "json" };
+// import serviceAccount from "../serviceAccountKey.json" with { type: "json" };
 
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
@@ -37,9 +37,10 @@ type StatsUpdate = {
 };
 // Initialize Firebase Admin (GOD MODE)
 // Make sure you have your serviceAccountKey.json in the root!
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+// });
+admin.initializeApp();
 const db = admin.firestore();
 
 const app = express();

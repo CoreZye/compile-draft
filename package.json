@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "server": "nodemon --exec ts-node src/server.ts",
     "client": "vite",
-    "dev": "concurrently \"npm run server\" \"npm run client -- --host\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev:host": "concurrently \"npm run server\" \"npm run client -- --host\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",
