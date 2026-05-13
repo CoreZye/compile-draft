@@ -1,11 +1,11 @@
-import express from 'express';
-import cors from 'cors'; // 1. Import cors
+import express, { type Request, type Response } from 'express';
+import cors from 'cors';
 import admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import path from 'path';
 
 export interface Draft {
-    timestamp: string; // ISO format
+    timestamp: string;
     winner: 'player1' | 'player2';
     remaining: string[];
     banned: string[];
@@ -39,6 +39,63 @@ type StatsUpdate = {
 };
 admin.initializeApp();
 const db = admin.firestore();
+
+const calculateBayesian = (wins: number, games: number, avgWinRate: number, m = 5) => {
+    if (games === 0) return 0;
+    const R = wins / games;
+    return ((R * games) + (avgWinRate * m)) / (games + m);
+};
+
+// The structure of a single entry in the matchups or synergies objects
+export interface SubStat {
+    games: number;
+    wins: number;
+}
+
+// The document structure in Firestore 'Stats' collection
+export interface FirestoreStatDoc {
+    available: number;
+    bans: number;
+    games: number;
+    wins: number;
+    matchups: Record<string, SubStat>;
+    synergies: Record<string, SubStat>;
+}
+
+// What the Table API returns
+export interface TableRow {
+    codename: string;
+    games: number;
+    winRatio: string;
+    pickRatio: string;
+    bayesian: string;
+    bans: number;
+}
+
+// What the Detail API returns
+export interface StatDetail {
+    codename: string;
+    general: {
+        games: number;
+        wins: number;
+        winRate: string;
+    };
+    matchups: Array<{ name: string; games: number; winRate: string }>;
+    synergies: Array<{ name: string; games: number; winRate: string }>;
+}
+
+interface StatsCache {
+    data: TableRow[] | null;
+    lastUpdated: number;
+}
+
+const cache: StatsCache = {
+    data: null,
+    lastUpdated: 0
+};
+
+const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
+
 
 const app = express();
 app.use(cors({
@@ -101,7 +158,6 @@ app.post('/api/draft', async (req, res) => {
             batch.update(statsRef, updates);
         });
 
-        // 6. Atomic Commit
         await batch.commit();
 
         res.status(201).json({ message: "Draft saved and stats updated successfully." });
@@ -109,6 +165,102 @@ app.post('/api/draft', async (req, res) => {
     } catch (error) {
         console.error("Draft Transaction Error:", error);
         res.status(500).json({ error: "Internal Server Error during stats update." });
+    }
+});
+
+app.get('/api/stats', async (_req: Request, res: Response<TableRow[] | { error: string }>) => {
+    const now = Date.now();
+
+    // 2. Check if cache is valid
+    if (cache.data && (now - cache.lastUpdated < CACHE_DURATION)) {
+        console.log("Serving from Cache");
+        return res.json(cache.data);
+    }
+    try {
+        const snapshot = await db.collection('Stats').get();
+
+        const docs = snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data() as FirestoreStatDoc
+        }));
+
+        let totalGamesGlobal = 0;
+        let totalWinsGlobal = 0;
+
+        docs.forEach(({ data }) => {
+            totalGamesGlobal += data.games;
+            totalWinsGlobal += data.wins;
+        });
+
+        const avgWinRate = totalWinsGlobal / (totalGamesGlobal || 1);
+        // const totalPossibleGames = totalGamesGlobal / 2;
+
+        const tableData: TableRow[] = docs.map(({ id, data }) => {
+            const winRatio = data.games > 0 ? (data.wins / data.games) * 100 : 0;
+            const banRatio = data.games > 0 ? (data.bans / data.games) * 100 : 0;
+            // const pickRatio = totalPossibleGames > 0 ? (data.games / totalPossibleGames) * 100 : 0;
+            const pickRatio = data.available > 0 ? (data.games / data.available) * 100 : 0;
+            const presenceRatio = data.available > 0 ? ((data.bans + data.games) / data.available) * 100 : 0;
+            const bayesian = calculateBayesian(data.wins, data.games, avgWinRate) * 100;
+
+            return {
+                codename: id,
+                games: data.games,
+                bans: data.bans,
+                available: data.available,
+                pickRatio: pickRatio.toFixed(1),
+                winRatio: winRatio.toFixed(1),
+                banRatio: banRatio.toFixed(1),
+                presenceRatio: presenceRatio.toFixed(1),
+                bayesian: bayesian.toFixed(1),
+            };
+        });
+
+        cache.data = tableData;
+        cache.lastUpdated = now;
+        console.log('Save new cache');
+
+        res.json(tableData.sort((a, b) => Number(b.bayesian) - Number(a.bayesian)));
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch stats ' + error });
+    }
+});
+
+app.get('/api/stats/:codename', async (req: Request, res: Response<StatDetail | { error: string }>) => {
+    const { codename } = req.params;
+    const codenameStr = codename as string;
+
+    try {
+        const doc = await db.collection('Stats').doc(codenameStr).get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: 'Codename not found' });
+        }
+
+        const data = doc.data() as FirestoreStatDoc;
+
+        const formatMap = (obj: Record<string, SubStat>) => {
+            return Object.entries(obj).map(([name, stats]) => ({
+                name,
+                games: stats.games,
+                winRate: stats.games > 0 ? ((stats.wins / stats.games) * 100).toFixed(1) : "0"
+            })).sort((a, b) => Number(b.winRate) - Number(a.winRate));
+        };
+
+        const response: StatDetail = {
+            codename: codenameStr,
+            general: {
+                games: data.games,
+                wins: data.wins,
+                winRate: data.games > 0 ? ((data.wins / data.games) * 100).toFixed(1) : "0"
+            },
+            matchups: formatMap(data.matchups),
+            synergies: formatMap(data.synergies)
+        };
+
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error ' + error });
     }
 });
 
