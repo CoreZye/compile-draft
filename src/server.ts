@@ -2,14 +2,16 @@ import express from 'express';
 import cors from 'cors'; // 1. Import cors
 import admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-// import serviceAccount from "../serviceAccountKey.json" with { type: "json" };
+import path from 'path';
 
-import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
-import type {Draft} from "@/utils/types.ts";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+export interface Draft {
+    timestamp: string; // ISO format
+    winner: 'player1' | 'player2';
+    remaining: string[];
+    banned: string[];
+    player1: string[];
+    player2: string[];
+}
 
 export interface InteractionStats {
     games: FieldValue;
@@ -35,11 +37,6 @@ type StatsUpdate = {
     // Dot-notation keys (synergies.id.games, etc.)
     [key: string]: FieldValue;
 };
-// Initialize Firebase Admin (GOD MODE)
-// Make sure you have your serviceAccountKey.json in the root!
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-// });
 admin.initializeApp();
 const db = admin.firestore();
 
@@ -50,22 +47,8 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-const distPath = path.resolve(__dirname, '../dist');
+const distPath = path.resolve(process.cwd(), 'dist');
 app.use(express.static(distPath));
-// 1. API ROUTES
-// app.post('/api/drafts', async (req: Request, res: Response) => {
-//     try {
-//         const { name, content } = req.body;
-//         const docRef = await db.collection('drafts').add({
-//             name,
-//             content,
-//             date: admin.firestore.FieldValue.serverTimestamp(),
-//         });
-//         res.status(201).json({ id: docRef.id });
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to save", message: error});
-//     }
-// });
 
 app.post('/api/draft', async (req, res) => {
     const draft: Draft = req.body;

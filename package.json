@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
+    "start": "node dist-server/src/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "nodemon --exec ts-node src/server.ts",

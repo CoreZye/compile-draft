@@ -9,6 +9,8 @@ lerna-debug.log*
 
 # PWA / Service Worker dev files
 dev-dist
+# Server dist
+dist-server
 
 node_modules
 dist
