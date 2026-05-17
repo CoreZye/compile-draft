@@ -52,6 +52,7 @@ export interface SubStat {
     wins: number;
 }
 
+
 // The document structure in Firestore 'Stats' collection
 export interface FirestoreStatDoc {
     available: number;
@@ -66,10 +67,14 @@ export interface FirestoreStatDoc {
 export interface TableRow {
     codename: string;
     games: number;
-    winRatio: string;
-    pickRatio: string;
-    bayesian: string;
+    winRatio: number;
+    pickRatio: number;
+    bayesian: number;
     bans: number;
+    available: number,
+    playRatio: number
+    banRatio: number,
+    presenceRatio: number,
 }
 
 // What the Detail API returns
@@ -193,12 +198,11 @@ app.get('/api/stats', async (_req: Request, res: Response<TableRow[] | { error: 
         });
 
         const avgWinRate = totalWinsGlobal / (totalGamesGlobal || 1);
-        // const totalPossibleGames = totalGamesGlobal / 2;
 
         const tableData: TableRow[] = docs.map(({ id, data }) => {
             const winRatio = data.games > 0 ? (data.wins / data.games) * 100 : 0;
             const banRatio = data.games > 0 ? (data.bans / data.games) * 100 : 0;
-            // const pickRatio = totalPossibleGames > 0 ? (data.games / totalPossibleGames) * 100 : 0;
+            const playRatio = totalGamesGlobal > 0 ? (data.games / totalGamesGlobal) * 100 : 0;
             const pickRatio = data.available > 0 ? (data.games / data.available) * 100 : 0;
             const presenceRatio = data.available > 0 ? ((data.bans + data.games) / data.available) * 100 : 0;
             const bayesian = calculateBayesian(data.wins, data.games, avgWinRate) * 100;
@@ -208,11 +212,12 @@ app.get('/api/stats', async (_req: Request, res: Response<TableRow[] | { error: 
                 games: data.games,
                 bans: data.bans,
                 available: data.available,
-                pickRatio: pickRatio.toFixed(1),
-                winRatio: winRatio.toFixed(1),
-                banRatio: banRatio.toFixed(1),
-                presenceRatio: presenceRatio.toFixed(1),
-                bayesian: bayesian.toFixed(1),
+                pickRatio: pickRatio,
+                playRatio: playRatio,
+                winRatio: winRatio,
+                banRatio: banRatio,
+                presenceRatio: presenceRatio,
+                bayesian: bayesian,
             };
         });
 

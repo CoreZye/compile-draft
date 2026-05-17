@@ -7,6 +7,7 @@ interface BorderBoxProps {
   className?: string;
   strokeColor?: string;
   active?: boolean;
+  onClick?: () => void;
   dashGap?: [number, number]; // [dashLength, gapLength]
 }
 
@@ -15,13 +16,16 @@ const BorderBox: React.FC<BorderBoxProps> = ({
   className = '', 
   strokeColor = '#3498db',
   dashGap = [8, 4],
+  onClick,
   active = true
 }) => {
   const [dash, gap] = dashGap;
   const offsetSum = dash + gap;
 
   return (
-    <div className={`dash-container ${className}`}>
+    <div className={`dash-container ${className}`} onClick={onClick} style={{
+        ...(onClick && { cursor: 'pointer', userSelect: 'none' })
+      }}>
       <svg className="dash-svg" preserveAspectRatio="none">
         <rect
           x="1"

@@ -4,7 +4,7 @@ import { CustomProvider, Text } from 'rsuite';
 import { SettingsProvider } from "@/context/SettingsProvider.tsx";
 // import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { VIEWS }  from "@/utils/constants.ts";
-import Draft from "@/components/pages/Draft.tsx";
+import DraftPage from "@/components/pages/Draft";
 import Toolbar from "@/components/Toolbar";
 import Home from '@/components/pages/Home.tsx';
 import Stats from '@/components/pages/Stats.tsx';
@@ -19,6 +19,7 @@ import useWindowSize from '@/hooks/useWindowSize';
 import { DataProvider } from '@/context/DataProvider';
 import { type PageProps} from "@/utils/types.ts";
 import TermsOfService from './components/minor/Terms';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 export interface MenuItem {
     id: string;
@@ -40,9 +41,9 @@ const menu : MenuItem[] = [
             {id: VIEWS.STATS_PERSONAL, title: 'Personal', },
         ]
     },
-    { id: VIEWS.DRAFT, title: 'Draft', icon: GiCardExchange, component: Draft, sub: [
+    { id: VIEWS.DRAFT, title: 'Draft', icon: GiCardExchange, component: DraftPage, sub: [
             {id: VIEWS.DRAFT_START, title: 'Start Draft', },
-            {id: VIEWS.DRAFT_JOIN, title: 'Join Draft', }
+            //{id: VIEWS.DRAFT_JOIN, title: 'Join Draft', }
         ]
     },
     { id: VIEWS.CODEX, title: 'Codex', icon: FaBook, component: Codex, sub: [
@@ -56,6 +57,7 @@ const lsActiveComp = 'activeComponent';
 
 function App() {
     const { width, height } = useWindowSize();
+    const queryClient = new QueryClient()
     const [activeView, setActiveView] = useState(() => {
         const saved = localStorage.getItem(lsActiveComp);
         const isValid = menu.some(item => item.id === saved);
@@ -90,22 +92,24 @@ function App() {
                 <PWAProvider>
                     <SettingsProvider>
                         <DataProvider>
-                            <TermsOfService/>
-                            <div className='app' id='app'>
-                                {width < 300 || height < 500 ?
-                                    <div className='applicationSizeError'>
-                                        Screen too small for the application to function properly
-                                        <Text muted>Try in another orientation</Text>
-                                    </div>
+                            <QueryClientProvider client={queryClient}>
+                                <TermsOfService/>
+                                <div className='app' id='app'>
+                                    {width < 300 || height < 500 ?
+                                        <div className='applicationSizeError'>
+                                            Screen too small for the application to function properly
+                                            <Text muted>Try in another orientation</Text>
+                                        </div>
 
-                                :
-                                    <ActivePage
-                                        subMenu={currentMenuItem!.sub}
-                                        activeSub={activeSubMenuItem ?? currentMenuItem!.sub?.[0].id}
-                                    />
-                                }
-                            </div>
-                            <Toolbar menu={menu} activeView={activeView} onViewChange={updateActiveComponent} onSubChange={updateActiveSubItem}/>
+                                    :
+                                        <ActivePage
+                                            subMenu={currentMenuItem!.sub}
+                                            activeSub={activeSubMenuItem ?? currentMenuItem!.sub?.[0].id}
+                                        />
+                                    }
+                                </div>
+                                <Toolbar menu={menu} activeView={activeView} onViewChange={updateActiveComponent} onSubChange={updateActiveSubItem}/>
+                            </QueryClientProvider>
                         </DataProvider>
                     </SettingsProvider>
                 </PWAProvider>

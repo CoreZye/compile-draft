@@ -55,7 +55,7 @@ function Toolbar({ activeView, onViewChange, menu, onSubChange }: ToolbarProps) 
                         appearance="subtle"
                         justified
                     >
-                        {subMenu.map(item => (
+                        {subMenu.length > 1 && subMenu.map(item => (
                             <Nav.Item key={item.id} eventKey={item.id}>{item.title}</Nav.Item>
                         ))}
                     </Nav>

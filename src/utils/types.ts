@@ -1,11 +1,12 @@
 export interface PageProps {
     subMenu?: { id: string; title: string }[];
     activeSub?: string | null;
+    onReset?: () => void;
     onSubChange?: (id: string) => void;
 }
 
 export interface Draft {
-    timestamp: string; // ISO format
+    timestamp: string;
     winner: 'player1' | 'player2';
     remaining: string[];
     banned: string[];

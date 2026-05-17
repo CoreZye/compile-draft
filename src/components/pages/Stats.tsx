@@ -1,148 +1,113 @@
 import '@/css/Stats.less';
-import React from 'react';
-import { Table, type SortType, Panel } from 'rsuite';
-import {DraftCreator} from "@/components/minor/TempGenerateDraft.tsx";
+import { Card, Panel, Heading, Text, VStack, HStack, StatGroup, Stat, ProgressCircle, ButtonGroup, Button } from 'rsuite';
 import { useStats } from '@/hooks/useStats';
 import {useGetData} from "@/context/DataContext.tsx";
-const { Column, HeaderCell, Cell } = Table;
+import { useState } from 'react';
 
-
-// interface StatData {
-//     protocol: string;
-//     games: number;
-//     pick: number;
-//     win: number;
-//     loss: number;
-// }
 
 function Stats () {
-    const [sortColumn, setSortColumn] = React.useState<string>();
-    const [sortType, setSortType] = React.useState<SortType>();
-    const [activeKey] = React.useState('general');
-    const { protocols } = useGetData();
+    const { protocols, packs } = useGetData();
     const { data, loading } = useStats();
-    // const getData = () => {
-    //     if (sortColumn && sortType) {
-    //         return data.sort((a, b) => {
-    //             const x = a[sortColumn as keyof StatData];
-    //             const y = b[sortColumn as keyof StatData];
-    //             if (sortType === 'asc') {
-    //                 return x - y;
-    //             } else {
-    //                 return y - x;
-    //             }
-    //         });
-    //     }
-    //     return data;
-    // };
+    const [activeKey, setActiveKey] = useState('Win Rate');
 
-    const tableData = protocols.map(protocol => {
+    const validIds = packs.filter(pack => (
+        pack.released
+    )).flatMap(item => (
+        item.contains
+    ));
+
+    const statsData = protocols.filter(item => (
+        validIds.includes(item.id)
+    )).map(protocol => {
         const protocolStats = data.find(item => {
             return item.codename === protocol.codename
         });
         return {
             name: protocol.name,
+            codename: protocol.codename,
             ...protocolStats
         }
     })
 
-    const handleSortColumn = (sortColumn: string, sortType?: SortType) => {
-        // setLoading(true);
-        setTimeout(() => {
-            // setLoading(false);
-            setSortColumn(sortColumn);
-            setSortType(sortType);
-        }, 500);
-    };
+    const StatItem = ({ value, label }: { value: number | undefined; label: string }) => (
+        <Stat>
+            <Stat.Label>{label}</Stat.Label>
+            <HStack>
+                <ProgressCircle percent={(Math.round((value?? 0.0) * 10) / 10)} w={'100%'} strokeWidth={5} trailWidth={5} />
+            </HStack>
+        </Stat>
+    );
+
+    const orderedData = [...statsData].sort((a, b) => {
+        const aHasFewGames = (a.games ?? 0) < 5;
+        const bHasFewGames = (b.games ?? 0) < 5;
+        if (aHasFewGames && !bHasFewGames) return 1;
+        if (!aHasFewGames && bHasFewGames) return -1;
+        if (activeKey === 'Play Rate') {
+            return (b.playRatio ?? 0) - (a.playRatio ?? 0);
+        }
+        if (activeKey === 'Pick Rate') {
+            return (b.pickRatio ?? 0) - (a.pickRatio ?? 0);
+        }
+        if (activeKey === 'Ban Rate') {
+            return (b.banRatio ?? 0) - (a.banRatio ?? 0);
+        }
+        return (b.winRatio ?? 0) - (a.winRatio ?? 0);
+    });
 
     return (
-        <>
-            <DraftCreator/>
-            <main className="my-content-area">
-                {activeKey === 'general' && (
-                    <Panel header="General Statistics" bodyFill>
-                        <Table
-                            data={tableData}
-                            sortColumn={sortColumn}
-                            sortType={sortType}
-                            onSortColumn={handleSortColumn}
-                            loading={loading}
-                            cellBordered
-                            autoHeight
-                            affixHeader
-                            affixHorizontalScrollbar
-                        >
-                            <Column width={100} flexGrow={3} fixed resizable>
-                                <HeaderCell> </HeaderCell>
-                                <Cell dataKey="name" />
-                            </Column>
-
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Available</HeaderCell>
-                                <Cell dataKey="available" />
-                            </Column>
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Games</HeaderCell>
-                                <Cell dataKey="games" />
-                            </Column>
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Bans</HeaderCell>
-                                <Cell dataKey="bans" />
-                            </Column>
-
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Bayesian %</HeaderCell>
-                                <Cell dataKey="pick" >
-                                    {rowData =><>{rowData.bayesian}%</>}
-                                </Cell>
-                            </Column>
-
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Pick %</HeaderCell>
-                                <Cell dataKey="pick" >
-                                    {rowData =><>{rowData.pickRatio}%</>}
-                                </Cell>
-                            </Column>
-
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Win %</HeaderCell>
-                                <Cell dataKey="win" >
-                                    {rowData =><>{rowData.winRatio}%</>}
-                                </Cell>
-                            </Column>
-
-                            <Column flexGrow={2} sortable>
-                                <HeaderCell>Presence %</HeaderCell>
-                                <Cell dataKey="loss" >
-                                    {rowData =><>{rowData.presenceRatio}%</>}
-                                </Cell>
-                            </Column>
-                        </Table>
-                    </Panel>
-                )}
-
-                {activeKey === 'combo' && (
-                    <Panel header="Combo Statistics">
-                        {/* Your BGG XML API Component */}
-                    </Panel>
-                )}
-
-                {activeKey === 'other' && (
-                    <Panel header="Other Statistics">
-                        <div style={{height: '70vh', whiteSpace: 'pre-wrap', wordWrap: 'break-word'}}>
-                            {`
-                                Personal vs Global Stats
-                                - Basic: Games, Ban, Pick, Win, Loss ratios
-                                - Combos: What protocols are often togather and their win ratios (best and worst?)
-                                - First/Second/Third pick?
-                                - ?? what more ??
-                                `.trim().replace(/^\s+/gm, '')
-                            }
-                        </div>
-                    </Panel>
-                )}
-            </main>
-        </>
+        <div className='stats'>
+            <Panel style={{position: 'sticky', top: -5, zIndex: 99, background: 'var(--bg)', marginTop: -10, paddingBottom: 10}}>
+                <Heading level={4}>
+                    Gernal Statistics
+                </Heading>
+                 <ButtonGroup justified style={{marginTop: 10}}>
+                    {['Win Rate', 'Play Rate', 'Pick Rate', 'Ban Rate'].map(key => (
+                        <Button key={key} active={key === activeKey} onClick={() => setActiveKey(key)}>
+                        {key}
+                        </Button>
+                    ))}
+                    </ButtonGroup>
+            </Panel>
+            <div className='data'>
+                {loading ? 
+                    <div>
+                        Loading
+                    </div>
+                :
+                    <>
+                        {orderedData.map(protocol => (
+                            <Card key={protocol.codename} shaded>
+                                <VStack spacing={2}>
+                                    <Card.Header>
+                                        <Text size="lg">
+                                            {protocol.name}
+                                        </Text>
+                                        <Text muted>
+                                            Games Played: {protocol.games}
+                                        </Text>
+                                    </Card.Header>
+                                    <Card.Body style={{width: '100%'}}>
+                                        {(protocol.games ?? 0) >= 5 ?
+                                            <StatGroup columns={4} spacing={0} >
+                                                <StatItem value={protocol.bayesian} label={'Win Rate'} />
+                                                <StatItem value={protocol.playRatio} label={'Play Rate'} />
+                                                <StatItem value={protocol.pickRatio} label={'Pick Rate'} />
+                                                <StatItem value={protocol.banRatio} label={'Ban Rate'} />
+                                            </StatGroup>
+                                            :
+                                            <Text muted>
+                                                not enough data
+                                            </Text>
+                                        }
+                                    </Card.Body>
+                                </VStack>
+                            </Card>
+                        ))}
+                    </>
+                } 
+            </div>
+        </div>
     );
 }
 

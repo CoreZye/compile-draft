@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 export interface TableRow {
     codename: string;
     games: number;
-    winRatio: string;
-    pickRatio: string;
-    bayesian: string;
+    winRatio: number;
+    pickRatio: number;
+    playRatio: number;
+    banRatio: number;
+    bayesian: number;
     bans: number;
 }
 
@@ -21,7 +23,6 @@ export const useStats = () => {
                 if (!response.ok) throw new Error('Failed to fetch global stats');
                 const result = await response.json();
                 setData(result);
-                console.log(result);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Unknown error');
             } finally {
