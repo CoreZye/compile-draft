@@ -3,7 +3,6 @@ import cors from 'cors';
 import admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import path from 'path';
-import type {TierLevel} from "@/utils/constants.ts";
 
 export interface Draft {
     timestamp: string;
@@ -105,7 +104,7 @@ const cache: StatsCache = {
 
 const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-const getTier = (val: number): TierLevel => {
+const getTier = (val: number): string => {
     if (val < 10) return 'F';
     if (val < 25) return 'E';
     if (val < 50) return 'D';
