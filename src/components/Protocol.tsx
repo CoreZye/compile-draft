@@ -14,20 +14,8 @@ import {
     Drawer
 } from 'rsuite';
 import { Close } from "@rsuite/icons";
-import { iconMap, type Protocol, type Pack} from '@/utils/constants.ts';
+import { iconMap, type Protocol, type Pack, cardImages} from '@/utils/constants.ts';
 import tempCard from '@/assets/temp-card.webp';
-const rawImages = import.meta.glob('@/assets/cards/*.webp', {
-    eager: true,
-    import: 'default'
-});
-const cardImages: Record<string, string> = Object.entries(rawImages).reduce(
-    (acc, [path, url]) => {
-        const name = path.split('/').pop()!.replace('.webp', '');
-        acc[name] = url as string;
-        return acc;
-    },
-    {} as Record<string, string>
-);
 
 export interface ProtocolModalHandle {
     open: (protocol: Protocol, pack?: Pack | undefined, idx?: number) => void;
@@ -44,18 +32,6 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
     const containerRef = useRef<HTMLDivElement>(null);
     const [activeDrawerId, setActiveDrawerId] = useState<string | null>(null);
     const closeDrawer = () => setActiveDrawerId(null);
-
-    useImperativeHandle(ref, () => ({
-        open: (data, pack, idx = 0) => {
-            setProtocol(data);
-            setPack(pack ?? null)
-            setOpen(true);
-            setCurrentStep(idx);
-            setTimeout(() =>{
-                scrollTo(idx, 'instant');
-            }, 200);
-        }
-    }));
 
     const scrollTo = (idx: number, scroll: ScrollBehavior = 'smooth') => {
         const container = containerRef.current;
@@ -82,6 +58,18 @@ const ProtocolModal = forwardRef<ProtocolModalHandle, ProtocolModalProps>((_prop
         setCurrentStep(step);
         scrollTo(step)
     }
+
+    useImperativeHandle(ref, () => ({
+        open: (data, pack, idx = 0) => {
+            setProtocol(data);
+            setPack(pack ?? null)
+            setOpen(true);
+            setCurrentStep(idx);
+            setTimeout(() =>{
+                scrollTo(idx, 'instant');
+            }, 200);
+        }
+    }));
 
     if (!protocol) return null;
 

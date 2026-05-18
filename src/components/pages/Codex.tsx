@@ -11,25 +11,12 @@ import {
     Accordion,
     Checkbox
 } from 'rsuite';
-import { type Pack, type Protocol, VIEWS, TAG_OPTIONS, type Tag, iconMap, type Card } from "@/utils/constants";
+import { type Pack, type Protocol, VIEWS, TAG_OPTIONS, type Tag, iconMap, type Card, cardImages, protocolImages } from "@/utils/constants";
 import ProtocolModal, { type ProtocolModalHandle } from '@/components/Protocol';
 import tempProtocol from '@/assets/temp-protocol.webp';
 import { useGetData } from '@/context/DataContext';
 import { type PageProps } from '@/utils/types';
 import tempCard from "@/assets/temp-card.webp";
-
-const rawImages = import.meta.glob('@/assets/cards/*.webp', {
-    eager: true,
-    import: 'default'
-});
-const cardImages: Record<string, string> = Object.entries(rawImages).reduce(
-    (acc, [path, url]) => {
-        const name = path.split('/').pop()!.replace('.webp', '');
-        acc[name] = url as string;
-        return acc;
-    },
-    {} as Record<string, string>
-);
 
 export interface ExtendedCard extends Card {
     imageKey: string;
@@ -202,20 +189,27 @@ function Codex ({ activeSub }: PageProps) {
                     <div className={'filteredContent'}>
                         {filteredCards.length > 0 ?
                             <div className={'filteredGrid'} style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10}} >
-                                {filteredCards.map((card) => (
-                                    <div key={card.imageKey} className={'item'} onClick={() => {
-                                        const thisProtocol = protocols.find(proto => {
-                                            return proto.id === card.protocolId
-                                        })
-                                        if (thisProtocol) {
-                                            const cardIdx = thisProtocol.cards.findIndex(c => c.value === card.value);
-                                            handleOpen(thisProtocol, undefined, cardIdx);
-                                        }  
-                                    }} >
-                                        <img src={cardImages[card.imageKey] ?? tempCard} alt={card.cardName}/>
-                                        <div className={'cardImage'} style={{backgroundImage: `url(${cardImages[card.imageKey] ?? tempCard})`,}}></div>
-                                    </div>
-                                ))}
+                                {filteredCards.map((card) => {
+                                    const image = cardImages[card.imageKey] ?? tempCard;
+                                    const hasImage = image !== tempCard;
+                                    return (
+                                        <div key={card.imageKey} className={'item'} onClick={() => {
+                                            const thisProtocol = protocols.find(proto => {
+                                                return proto.id === card.protocolId
+                                            })
+                                            if (thisProtocol) {
+                                                const cardIdx = thisProtocol.cards.findIndex(c => c.value === card.value);
+                                                handleOpen(thisProtocol, undefined, cardIdx);
+                                            }
+                                        }} >
+                                            <div className={'cardImage'} style={{backgroundImage: `url(${image})`}}>
+                                                {!hasImage &&
+                                                    <Text>{card.cardName}</Text>
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                             :
                             <Center>
@@ -238,13 +232,15 @@ function Codex ({ activeSub }: PageProps) {
                         }).map(pack => (
                             <Fragment key={pack.codename}>
                                 {protocols.filter(item => pack.contains.includes(item.id)).map((protocol) => {
+                                    const image = protocolImages[protocol.codename] ?? tempProtocol;
+                                    const hasImage = image !== tempProtocol;
                                     return (
                                         <button key={protocol.id} onClick={() => handleOpen(protocol, pack)} className={'protocol'}>
                                             {pack &&
                                                 <div className={'protocol-banner ' + ('cycle-' + pack.cycle)}>{pack.name}</div>
                                             }
-                                            <div className={'protocol-sprite'} style={{backgroundImage: `url(${tempProtocol})`}}>
-                                                <Text>{protocol.name}</Text>
+                                            <div className={'protocol-sprite'} style={{backgroundImage: `url(${image})`}}>
+                                                {!hasImage && <Text>{protocol.name}</Text>}
                                             </div>
                                         </button>
                                     )

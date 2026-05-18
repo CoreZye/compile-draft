@@ -29,14 +29,30 @@ function Stats () {
         }
     })
 
-    const StatItem = ({ value, label }: { value: number | undefined; label: string }) => (
-        <Stat>
-            <Stat.Label>{label}</Stat.Label>
-            <HStack>
-                <ProgressCircle percent={(Math.round((value?? 0.0) * 10) / 10)} w={'100%'} strokeWidth={5} trailWidth={5} />
-            </HStack>
-        </Stat>
-    );
+    const StatItem = ({ value, label }: { value: number | undefined; label: string }) => {
+        const getCircleColor = (val: number): string => {
+            if (val < 25) return '#f7635c'; // Red
+            if (val < 50) return '#ff9800'; // Orange
+            if (val < 75) return '#ffeb3b'; // Yellow
+            return '#28a745';                // Green (76-100)
+        };
+        const val = (Math.round((value?? 0.0) * 10) / 10);
+        return (
+            <Stat>
+                <Stat.Label>{label}</Stat.Label>
+                <HStack>
+                    <ProgressCircle
+                        percent={val}
+                        w={'100%'}
+                        strokeWidth={5}
+                        trailWidth={5}
+                        gapDegree={180}
+                        strokeColor={getCircleColor(val)}
+                    />
+                </HStack>
+            </Stat>
+        );
+    }
 
     const orderedData = [...statsData].sort((a, b) => {
         const aHasFewGames = (a.games ?? 0) < 5;

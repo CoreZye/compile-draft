@@ -141,6 +141,7 @@
 }
 
 .affix {
+    z-index: 99;
     position: sticky;
     top: -1px;
     background: var(--bg);
@@ -162,7 +163,29 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        align-items: center;
         height: 100%;
+    }
+    .item {
+        position: relative;
+
+        .rs-text {
+            color: var(--accent);
+            font-size: 20px;
+            font-weight: 700;
+            position: absolute;
+            top: 15%;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+    }
+
+
+    .cardImage {
+        width: 100%;
+        aspect-ratio: 533/744;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
     }
 }

@@ -151,3 +151,29 @@ export const iconMap: Record<number, IconType> = {
     8: PiNumberEightFill,
     9: PiNumberNineFill,
 }
+
+const rawCardImages = import.meta.glob('@/assets/cards/*.webp', {
+    eager: true,
+    import: 'default'
+});
+export const cardImages: Record<string, string> = Object.entries(rawCardImages).reduce(
+    (acc, [path, url]) => {
+        const name = path.split('/').pop()!.replace('.webp', '');
+        acc[name] = url as string;
+        return acc;
+    },
+    {} as Record<string, string>
+);
+
+const rawProtocolImages = import.meta.glob('@/assets/protocols/*.webp', {
+    eager: true,
+    import: 'default'
+});
+export const protocolImages: Record<string, string> = Object.entries(rawProtocolImages).reduce(
+    (acc, [path, url]) => {
+        const name = path.split('/').pop()!.replace('.webp', '');
+        acc[name] = url as string;
+        return acc;
+    },
+    {} as Record<string, string>
+);
