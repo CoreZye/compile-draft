@@ -1,7 +1,8 @@
 import '@/css/Stats.less';
 import { Card, Panel, Heading, Text, VStack, HStack, StatGroup, Stat, ProgressCircle, ButtonGroup, Button } from 'rsuite';
 import { useStats } from '@/hooks/useStats';
-import {useGetData} from "@/context/DataContext.tsx";
+import {useGetData} from "@/context/DataContext";
+import { tierMap, type TierLevel } from '@/utils/constants';
 import { useState } from 'react';
 
 
@@ -29,7 +30,7 @@ function Stats () {
         }
     })
 
-    const StatItem = ({ value, label }: { value: number | undefined; label: string }) => {
+    const StatItem = ({ value, label, relativeScale }: { value: number | undefined; label: string, relativeScale?: number }) => {
         const getCircleColor = (val: number): string => {
             if (val < 25) return '#f7635c'; // Red
             if (val < 50) return '#ff9800'; // Orange
@@ -37,17 +38,20 @@ function Stats () {
             return '#28a745';                // Green (76-100)
         };
         const val = (Math.round((value?? 0.0) * 10) / 10);
+        const percent = relativeScale ?? val;
         return (
             <Stat>
                 <Stat.Label>{label}</Stat.Label>
                 <HStack>
                     <ProgressCircle
-                        percent={val}
+                        renderInfo={() => val.toString() + '%'}
+                        percent={percent}
                         w={'100%'}
                         strokeWidth={5}
+                        strokeLinecap={'square'}
                         trailWidth={5}
                         gapDegree={180}
-                        strokeColor={getCircleColor(val)}
+                        strokeColor={getCircleColor(percent)}
                     />
                 </HStack>
             </Stat>
@@ -92,34 +96,43 @@ function Stats () {
                     </div>
                 :
                     <>
-                        {orderedData.map(protocol => (
-                            <Card key={protocol.codename} shaded>
-                                <VStack spacing={2}>
-                                    <Card.Header>
-                                        <Text size="lg">
-                                            {protocol.name}
-                                        </Text>
-                                        <Text muted>
-                                            Games Played: {protocol.games}
-                                        </Text>
-                                    </Card.Header>
-                                    <Card.Body style={{width: '100%'}}>
-                                        {(protocol.games ?? 0) >= 5 ?
-                                            <StatGroup columns={4} spacing={0} >
-                                                <StatItem value={protocol.bayesian} label={'Win Rate'} />
-                                                <StatItem value={protocol.playRatio} label={'Play Rate'} />
-                                                <StatItem value={protocol.pickRatio} label={'Pick Rate'} />
-                                                <StatItem value={protocol.banRatio} label={'Ban Rate'} />
-                                            </StatGroup>
-                                            :
-                                            <Text muted>
-                                                not enough data
+                        {orderedData.map(protocol => {
+                            const tier = protocol.tier;
+                            const Icon = tier && tier in tierMap ? tierMap[tier as TierLevel] : null;
+                            return (
+                                <Card key={protocol.codename} shaded>
+                                    <VStack spacing={2}>
+                                        <Card.Header>
+                                            <Text size="lg">
+                                                {protocol.name}
                                             </Text>
-                                        }
-                                    </Card.Body>
-                                </VStack>
-                            </Card>
-                        ))}
+                                            <Text muted>
+                                                Games Played: {protocol.games}
+                                            </Text>
+                                            <div className={'tier'}>
+                                                {Icon &&
+                                                    <Icon size={36} className={'tier-level level-' + tier}/>
+                                                }
+                                            </div>
+                                        </Card.Header>
+                                        <Card.Body style={{width: '100%'}}>
+                                            {protocol.isValid ?
+                                                <StatGroup columns={4} spacing={0} >
+                                                    <StatItem value={protocol.bayesian} label={'Win Rate'} />
+                                                    <StatItem value={protocol.playRatio} label={'Play Rate'} relativeScale={protocol.relativePlayRatio} />
+                                                    <StatItem value={protocol.pickRatio} label={'Pick Rate'} />
+                                                    <StatItem value={protocol.banRatio} label={'Ban Rate'} />
+                                                </StatGroup>
+                                                :
+                                                <Text muted>
+                                                    not enough data
+                                                </Text>
+                                            }
+                                        </Card.Body>
+                                    </VStack>
+                                </Card>
+                            )
+                        })}
                     </>
                 } 
             </div>

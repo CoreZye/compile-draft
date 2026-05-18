@@ -37,4 +37,34 @@
     .rs-progress-circle-svg {
         transform: scaleX(-1);
     }
+
+    .tier {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+
+        .tier-level {
+            &.level-S {
+                color: var(--accent);
+            }
+            &.level-A {
+                color: #14ff00;
+            }
+            &.level-B {
+                color: #b4ff00;
+            }
+            &.level-C {
+                color: #ffc800;
+            }
+            &.level-D {
+                color: #ff8700;
+            }
+            &.level-E {
+                color: #ff6400;
+            }
+            &.level-F {
+                color: #ff0000;
+            }
+        }
+    }
 }

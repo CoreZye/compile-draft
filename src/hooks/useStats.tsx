@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 
 export interface TableRow {
     codename: string;
+    isValid: boolean;
+    tier: string;
     games: number;
     winRatio: number;
     pickRatio: number;
     playRatio: number;
+    relativePlayRatio: number;
     banRatio: number;
     bayesian: number;
     bans: number;

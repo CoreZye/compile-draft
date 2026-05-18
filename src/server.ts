@@ -3,6 +3,7 @@ import cors from 'cors';
 import admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import path from 'path';
+import type {TierLevel} from "@/utils/constants.ts";
 
 export interface Draft {
     timestamp: string;
@@ -66,15 +67,18 @@ export interface FirestoreStatDoc {
 // What the Table API returns
 export interface TableRow {
     codename: string;
+    isValid: boolean;
+    tier: string;
     games: number;
     winRatio: number;
     pickRatio: number;
     bayesian: number;
     bans: number;
-    available: number,
-    playRatio: number
-    banRatio: number,
-    presenceRatio: number,
+    available: number;
+    playRatio: number;
+    relativePlayRatio:number;
+    banRatio: number;
+    presenceRatio: number;
 }
 
 // What the Detail API returns
@@ -101,6 +105,16 @@ const cache: StatsCache = {
 
 const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
+const getTier = (val: number): TierLevel => {
+    if (val < 10) return 'F';
+    if (val < 25) return 'E';
+    if (val < 50) return 'D';
+    if (val < 65) return 'C';
+    if (val < 75) return 'B';
+    if (val < 85) return 'A';
+    if (val >= 85) return 'S';
+    return '';
+};
 
 const app = express();
 app.use(cors({
@@ -191,8 +205,12 @@ app.get('/api/stats', async (_req: Request, res: Response<TableRow[] | { error: 
 
         let totalGamesGlobal = 0;
         let totalWinsGlobal = 0;
+        let highestPlayedGames = 0;
 
         docs.forEach(({ data }) => {
+            if (data.games > highestPlayedGames) {
+                highestPlayedGames = data.games;
+            }
             totalGamesGlobal += data.games;
             totalWinsGlobal += data.wins;
         });
@@ -200,26 +218,33 @@ app.get('/api/stats', async (_req: Request, res: Response<TableRow[] | { error: 
         const avgWinRate = totalWinsGlobal / (totalGamesGlobal || 1);
 
         const tableData: TableRow[] = docs.map(({ id, data }) => {
+            const isValid = data.games >= 5;
             const winRatio = data.games > 0 ? (data.wins / data.games) * 100 : 0;
             const banRatio = data.games > 0 ? (data.bans / data.games) * 100 : 0;
             const playRatio = totalGamesGlobal > 0 ? (data.games / totalGamesGlobal) * 100 : 0;
+            const relativePlayRatio = (data.games / highestPlayedGames) * 100;
             const pickRatio = data.available > 0 ? (data.games / data.available) * 100 : 0;
             const presenceRatio = data.available > 0 ? ((data.bans + data.games) / data.available) * 100 : 0;
             const bayesian = calculateBayesian(data.wins, data.games, avgWinRate) * 100;
+            const tier = data.games >= 5 ? getTier(winRatio) : '';
 
             return {
+                isValid: isValid,
                 codename: id,
+                tier: tier,
                 games: data.games,
                 bans: data.bans,
                 available: data.available,
                 pickRatio: pickRatio,
                 playRatio: playRatio,
+                relativePlayRatio: relativePlayRatio,
                 winRatio: winRatio,
                 banRatio: banRatio,
                 presenceRatio: presenceRatio,
                 bayesian: bayesian,
             };
         });
+
 
         cache.data = tableData;
         cache.lastUpdated = now;

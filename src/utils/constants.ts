@@ -10,6 +10,15 @@ import {
     PiNumberEightFill,
     PiNumberNineFill
 } from "react-icons/pi";
+import {
+    TbHexagonLetterSFilled,
+    TbHexagonLetterAFilled,
+    TbHexagonLetterBFilled,
+    TbHexagonLetterCFilled,
+    TbHexagonLetterDFilled,
+    TbHexagonLetterEFilled,
+    TbHexagonLetterFFilled
+} from "react-icons/tb";
 
 import { type IconType } from 'react-icons';
 
@@ -151,6 +160,18 @@ export const iconMap: Record<number, IconType> = {
     8: PiNumberEightFill,
     9: PiNumberNineFill,
 }
+
+export const tierMap: Record<string, IconType> = {
+    'S': TbHexagonLetterSFilled,
+    'A': TbHexagonLetterAFilled,
+    'B': TbHexagonLetterBFilled,
+    'C': TbHexagonLetterCFilled,
+    'D': TbHexagonLetterDFilled,
+    'E': TbHexagonLetterEFilled,
+    'F': TbHexagonLetterFFilled,
+}
+
+export type TierLevel = keyof typeof tierMap;
 
 const rawCardImages = import.meta.glob('@/assets/cards/*.webp', {
     eager: true,
